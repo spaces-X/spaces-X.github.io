@@ -300,8 +300,6 @@
 </article>
 
         
-            <div id="comment-container"></div>
-        
         
     </div>
 
@@ -624,26 +622,6 @@
 
     
     
-    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
-    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
-    <script src="/js/md5.min.js"></script>
-
-    <script>
-        var tags = ['Hadoop部署', 'Eclipse', 'Map-Reduce', ];
-
-        var gitalk = new Gitalk({
-            clientID: 'ffb17145b46132415448',
-            clientSecret: '4ea3f05eb857014a3cb50a18b83721e1c7660a06',
-            repo: 'spaces-X.github.io',
-            owner: 'spaces-X',
-            admin: ['s', 'p', 'a', 'c', 'e', 's', '-', 'X', ],
-            labels: tags,
-            id: (new Date(1532582146000)).getTime() > (new Date('2018-02-15')).getTime() ? md5(location.href) : location.href
-        });
-
-        gitalk.render('comment-container');
-    </script>
-
 
 
 
