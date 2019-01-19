@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    
+        <title>网络基础之TCP连接建立分析 | X-Blog</title>
+    
+
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<meta name="format-detection" content="telephone=no">
+<meta name="author" content="[object Object]" />
+<meta name="designer" content="minfive" />
+<meta name="keywords" content="Xiang blog, 程序员, SCI论文, Python, Hadoop, 深度炼丹"/>
+<meta name="description" content="日常学习与兴趣交流的个人博客" />
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="robots" content="all" />
+
+<link rel="canonical" href="https://spaces-x.github.io/2018/07/16/tcp/index.html">
+
+<link rel="icon" type="image/png" href="https://www.easyicon.net/api/resizeApi.php?id=546977&size=32" sizes="32x32">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Prefetch -->
+
+
+
+
+
+
+<!-- CSS -->
+<link rel="stylesheet" href="/scss/base/index.css">
+
+<!-- RSS -->
+<link rel="alternate" href="/atom.xml" title="Space-X">
+
+<!-- 统计 -->
+<!-- 百度统计 -->
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    
+    
+    <link rel="stylesheet" href="/scss/views/page/post.css">
+
+</head>
+<body ontouchstart>
+    
+        <!-- loading 页面 -->
+<div id="page-loading" class="page page-loading" style="background-image: url('http://oo12ugek5.bkt.clouddn.com/blog/images/loader.gif')"></div>
+    
+
+    <div id="page" class="page js-hidden">
+        
+    <!-- 页头 -->
+<header class="page__small-header page__header--small">
+    <nav class="page__navbar">
+        <div class="page__container navbar-container">
+            <a class="page__logo" href="/" title="Space-X" alt="Space-X">
+                <img src="https://s1.ax1x.com/2018/07/15/PMfvfP.png" alt="Space-X">
+            </a>
+
+            <nav class="page__nav">
+                <ul class="nav__list clearfix">
+                    
+                        
+                        <li class="nav__item">
+                            <a href="/" alt="首页" title="首页">首页</a>
+                        </li>
+                    
+                        
+                        <li class="nav__item">
+                            <a href="/archives" alt="归档" title="归档">归档</a>
+                        </li>
+                    
+                        
+                        <li class="nav__item">
+                            <a href="/about" alt="关于" title="关于">关于</a>
+                        </li>
+                    
+                </ul>
+            </nav>
+
+            <button class="page__menu-btn" type="button">
+                <i class="iconfont icon-menu"></i>
+            </button>
+        </div>
+    </nav>
+</header>
+
+
+        
+    <main class="page__container page__main">
+    <div class="page__content">
+        <article class="page__post">
+    <div class="post__cover">
+        <img src="https://s1.ax1x.com/2018/08/08/PsgvVg.jpg" alt="网络基础之TCP连接建立分析">
+    </div>
+
+    <header class="post__info">
+        <h1 class="post__title">网络基础之TCP连接建立分析</h1>
+
+        <div class="post__mark">
+            <div class="mark__block">
+                <i class="mark__icon iconfont icon-write"></i>
+                <ul class="mark__list clearfix">
+                    <li class="mark__item">
+                        <a href="https://www.github.com/spaces-x">WeiXiang</a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="mark__block">
+                <i class="mark__icon iconfont icon-time"></i>
+                <ul class="mark__list clearfix">
+                    <li class="mark__item"><span>2018-07-16</span></li>
+                </ul>
+            </div>
+
+            <div class="mark__block">
+                <i class="mark__icon iconfont icon-tab"></i>
+                <ul class="mark__list clearfix">
+                    
+                        <li class="mark__item">
+                            <a href="/tags/TCP-Socket通信/">TCP,Socket通信</a>
+                        </li>
+                    
+                        <li class="mark__item">
+                            <a href="/tags/计算机网络/">计算机网络</a>
+                        </li>
+                    
+                </ul>
+            </div>
+
+            
+        </div>
+    </header>
+
+    <div class="post__content">
+        <h3 id="问题描述："><a href="#问题描述：" class="headerlink" title="问题描述："></a>问题描述：</h3><p>在JAVA的client和server，使用socket通信，server使用NIO。</p>
+<blockquote>
+<p>1.间歇性得出现client向server建立连接三次握手已经完成，但server的selector没有响应到这连接。<br>2.出问题的时间点，会同时有很多连接出现这个问题。<br>3.selector没有销毁重建，一直用的都是一个。<br>4.程序刚启动的时候必会出现一些，之后会间歇性出现。</p>
+</blockquote>
+<h3 id="正常的TCP建立连接三次握手的过程："><a href="#正常的TCP建立连接三次握手的过程：" class="headerlink" title="正常的TCP建立连接三次握手的过程："></a>正常的TCP建立连接三次握手的过程：</h3><p><img src="https://s1.ax1x.com/2018/08/08/PsgpjK.png" alt="tcp三次握手"></p>
+<ul>
+<li>第一步：client 发送 syn 到server 发起握手；</li>
+<li>第二步：server 收到 syn后回复syn+ack给client；</li>
+<li>第三步：client 收到syn+ack后，回复server一个ack表示收到了server的syn+ack（此时client的56911端口的连接已经是established）</li>
+</ul>
+<p>从问题的描述来看，有点像TCP建连接的时候全连接队列（accept队列，后面具体讲）满了，尤其是症状2、4. 为了证明是这个原因，马上通过 netstat -s | egrep “listen” 去看队列的溢出统计数据：    </p>
+<p><img src="https://s1.ax1x.com/2018/08/08/PsgPBD.png" alt=""></p>
+<p>反复看了几次之后发现这个overflowed 数目一直在增加，那么可以明确的是server上全连接队列一定溢出了。<br>接着查看溢出后，OS怎么处理：</p>
+<p><img src="https://s1.ax1x.com/2018/08/08/Psge3t.png" alt=""></p>
+<p><strong>tcp_abort_on_overflow 为0表示如果三次握手第三步的时候全连接队列满了那么server扔掉client 发过来的ack（在server端认为连接还没建立起来）</strong></p>
+<p>为了证明客户端应用代码的异常跟全连接队列满有关系，我先把tcp_abort_on_overflow修改成 1，1表示第三步的时候如果全连接队列满了，server发送一个reset包给client，表示废掉这个握手过程和这个连接（本来在server端这个连接就还没建立起来）。</p>
+<p>接着测试，这时在客户端异常中可以看到很多connection reset by peer的错误，到此证明客户端错误是这个原因导致的（逻辑严谨、快速证明问题的关键点所在）。</p>
+<p>于是开发同学翻看java 源代码发现socket 默认的backlog（这个值控制全连接队列的大小，后面再详述）是50，于是改大重新跑，经过12个小时以上的压测，这个错误一次都没出现了，同时观察到 overflowed 也不再增加了。</p>
+<p>到此问题解决，简单来说TCP三次握手后有个accept队列，进到这个队列才能从Listen变成accept，默认backlog 值是50，很容易就满了。满了之后握手第三步的时候server就忽略了client发过来的ack包（隔一段时间server重发握手第二步的syn+ack包给client），如果这个连接一直排不上队就异常了。</p>
+<blockquote>
+<p>但是不能只是满足问题的解决，而是要去复盘解决过程，中间涉及到了哪些知识点是我所缺失或者理解不到位的；这个问题除了上面的异常信息表现出来之外，还有没有更明确地指征来查看和确认这个问题。</p>
+</blockquote>
+<h3 id="深入理解TCP握手过程中建连接的流程和队列"><a href="#深入理解TCP握手过程中建连接的流程和队列" class="headerlink" title="深入理解TCP握手过程中建连接的流程和队列"></a><font color="#FF7F50">深入理解TCP握手过程中建连接的流程和队列</font></h3><p><img src="https://s1.ax1x.com/2018/08/08/PsgKu8.jpg" alt=""><br>如上图所示，这里有两个队列：syns queue(半连接队列）；accept queue（全连接队列）。</p>
+<p>三次握手中，在第一步server收到client的syn后，把这个连接信息放到半连接队列中，同时回复syn+ack给client（第二步）；</p>
+<p>第三步的时候server收到client的ack，如果这时全连接队列没满，那么从半连接队列拿出这个连接的信息放入到全连接队列中，否则按tcp_abort_on_overflow指示的执行。</p>
+<p>这时如果全连接队列满了并且tcp_abort_on_overflow是0的话，server过一段时间再次发送syn+ack给client（也就是重新走握手的第二步），如果client超时等待比较短，client就很容易异常了。</p>
+<p>在我们的os中retry 第二步的默认次数是2（centos默认是5次）：<br><img src="https://s1.ax1x.com/2018/08/08/PsgdDU.png" alt=""></p>
+<h3 id="如果TCP连接队列溢出，有哪些指标可以看呢？"><a href="#如果TCP连接队列溢出，有哪些指标可以看呢？" class="headerlink" title="如果TCP连接队列溢出，有哪些指标可以看呢？"></a><font color="#FF7F50">如果TCP连接队列溢出，有哪些指标可以看呢？</font></h3><p>上述解决过程有点绕，听起来懵，那么下次再出现类似问题有什么更快更明确的手段来确认这个问题呢？（通过具体的、感性的东西来强化我们对知识点的理解和吸收。）</p>
+<h4 id="netstat-s"><a href="#netstat-s" class="headerlink" title="netstat -s"></a>netstat -s</h4><p><img src="https://s1.ax1x.com/2018/08/08/PsgwbF.jpg" alt=""><br>比如上面看到的 667399 times ，表示全连接队列溢出的次数，隔几秒钟执行下，如果这个数字一直在增加的话肯定全连接队列偶尔满了。</p>
+<h4 id="ss-命令"><a href="#ss-命令" class="headerlink" title="ss 命令"></a>ss 命令</h4><p><img src="https://s1.ax1x.com/2018/08/08/PsgBE4.jpg" alt=""><br>上面看到的第二列Send-Q 值是50，表示第三列的listen端口上的全连接队列最大为50，第一列Recv-Q为全连接队列当前使用了多少。</p>
+<p>全连接队列的大小取决于：min(backlog, somaxconn) . backlog是在socket创建的时候传入的，somaxconn是一个os级别的系统参数。</p>
+<p>这个时候可以跟我们的代码建立联系了，比如Java创建ServerSocket的时候会让你传入backlog的值：<br><img src="https://s1.ax1x.com/2018/08/08/PsgbxP.jpg" alt=""></p>
+<h4 id="半连接队列的大小取决于：max-64-proc-sys-net-ipv4-tcp-max-syn-backlog-，不同版本的os会有些差异。"><a href="#半连接队列的大小取决于：max-64-proc-sys-net-ipv4-tcp-max-syn-backlog-，不同版本的os会有些差异。" class="headerlink" title="半连接队列的大小取决于：max(64,  /proc/sys/net/ipv4/tcp_max_syn_backlog)，不同版本的os会有些差异。"></a>半连接队列的大小取决于：max(64,  /proc/sys/net/ipv4/tcp_max_syn_backlog)，不同版本的os会有些差异。</h4><blockquote>
+<p>我们写代码的时候从来没有想过这个backlog或者说大多时候就没给他值（那么默认就是50），直接忽视了他，首先这是一个知识点的盲点；其次也许哪天你在哪篇文章中看到了这个参数，当时有点印象，但是过一阵子就忘了，这是知识之间没有建立连接，不是体系化的。但是如果你跟我一样首先经历了这个问题的痛苦，然后在压力和痛苦的驱动自己去找为什么，同时能够把为什么从代码层推理理解到OS层，那么这个知识点你才算是比较好地掌握了，也会成为你的知识体系在TCP或者性能方面成长自我生长的一个有力抓手。</p>
+</blockquote>
+<h4 id="netstat-命令"><a href="#netstat-命令" class="headerlink" title="netstat 命令"></a>netstat 命令</h4><p>netstat跟ss命令一样也能看到Send-Q、Recv-Q这些状态信息，不过如果这个连接不是Listen状态的话，Recv-Q就是指收到的数据还在缓存中，还没被进程读取，这个值就是还没被进程读取的 bytes；而 Send 则是发送队列中没有被远程主机确认的 bytes 数。</p>
+<p><img src="https://s1.ax1x.com/2018/08/08/Psgcgx.jpg" alt=""><br>netstat -tn 看到的 Recv-Q 跟全连接半连接没有关系，这里特意拿出来说一下是因为容易跟 ss -lnt 的 Recv-Q 搞混淆，顺便建立知识体系，巩固相关知识点 。  </p>
+<p>比如如下netstat -t 看到的Recv-Q有大量数据堆积，那么一般是CPU处理不过来导致的：<br><img src="https://s1.ax1x.com/2018/08/08/PsgfbD.jpg" alt=""><br>上面是通过一些具体的工具、指标来认识全连接队列（工程效率的手段）。  </p>
+<h4 id="实践验证一下上面的理解"><a href="#实践验证一下上面的理解" class="headerlink" title="实践验证一下上面的理解"></a><font color="#FF7F50">实践验证一下上面的理解</font></h4><p>把java中backlog改成10（越小越容易溢出），继续跑压力，这个时候client又开始报异常了，然后在server上通过 ss 命令观察到：</p>
+<p><img src="https://s1.ax1x.com/2018/08/08/Psg4Ve.jpg" alt=""><br>按照前面的理解，这个时候我们能看到3306这个端口上的服务全连接队列最大是10，但是现在有11个在队列中和等待进队列的，肯定有一个连接进不去队列要overflow掉，同时也确实能看到overflow的值在不断地增大。</p>
+<h4 id="Tomcat和Nginx中的Accept队列参数"><a href="#Tomcat和Nginx中的Accept队列参数" class="headerlink" title="Tomcat和Nginx中的Accept队列参数"></a><font color="#FF7F50">Tomcat和Nginx中的Accept队列参数</font></h4><p>Tomcat默认短连接，backlog（Tomcat里面的术语是Accept count）Ali-tomcat默认是200, Apache Tomcat默认100。</p>
+<p><img src="https://s1.ax1x.com/2018/08/08/Psg78I.jpg" alt=""><br>Nginx默认是511<br><img src="https://s1.ax1x.com/2018/08/08/PsgH2t.jpg" alt=""><br>因为Nginx是多进程模式，所以看到了多个8085，也就是多个进程都监听同一个端口以尽量避免上下文切换来提升性能   </p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a><font color="#FF7F50">总结</font></h4><p>全连接队列、半连接队列溢出这种问题很容易被忽视，但是又很关键，特别是对于一些短连接应用（比如Nginx、PHP，当然他们也是支持长连接的）更容易爆发。 一旦溢出，从cpu、线程状态看起来都比较正常，但是压力上不去，在client看来rt也比较高（rt=网络+排队+真正服务时间），但是从server日志记录的真正服务时间来看rt又很短。</p>
+<p>jdk、netty等一些框架默认backlog比较小，可能有些情况下导致性能上不去。</p>
+<p>希望通过本文能够帮大家理解TCP连接过程中的半连接队列和全连接队列的概念、原理和作用，更关键的是有哪些指标可以明确看到这些问题（工程效率帮助强化对理论的理解）。</p>
+<p>另外每个具体问题都是最好学习的机会，光看书理解肯定是不够深刻的，请珍惜每个具体问题，碰到后能够把来龙去脉弄清楚，每个问题都是你对具体知识点通关的好机会。</p>
+<h4 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章:"></a>参考文章:</h4><blockquote>
+<p><a href="http://www.cnxct.com/something-about-phpfpm-s-backlog/" target="_blank" rel="noopener">http://www.cnxct.com/something-about-phpfpm-s-backlog/</a><br><a href="http://veithen.github.io/2014/01/01/how-tcp-backlog-works-in-linux.html" target="_blank" rel="noopener">http://veithen.github.io/2014/01/01/how-tcp-backlog-works-in-linux.html</a><br><a href="http://www.cnblogs.com/zengkefu/p/5606696.html" target="_blank" rel="noopener">http://www.cnblogs.com/zengkefu/p/5606696.html</a><br><a href="http://www.cnxct.com/something-about-phpfpm-s-backlog/" target="_blank" rel="noopener">http://www.cnxct.com/something-about-phpfpm-s-backlog/</a><br><a href="http://jaseywang.me/2014/07/20/tcp-queue-%E7%9A%84%E4%B8%80%E4%BA%9B%E9%97%AE%E9%A2%98/" target="_blank" rel="noopener">http://jaseywang.me/2014/07/20/tcp-queue-%E7%9A%84%E4%B8%80%E4%BA%9B%E9%97%AE%E9%A2%98/</a><br><a href="http://jin-yang.github.io/blog/network-synack-queue.html#" target="_blank" rel="noopener">http://jin-yang.github.io/blog/network-synack-queue.html#</a><br><a href="http://blog.chinaunix.net/uid-20662820-id-4154399.html" target="_blank" rel="noopener">http://blog.chinaunix.net/uid-20662820-id-4154399.html</a></p>
+</blockquote>
+
+
+        
+        <div class="post-announce">
+            感谢您的阅读，本文由
+            <a href="https://spaces-x.github.io">Space-X</a>
+            版权所有。如若转载，请注明出处：Space-X（<a href="https://spaces-x.github.io/2018/07/16/tcp/">https://spaces-x.github.io/2018/07/16/tcp/</a>）
+        </div>
+        
+
+        <div class="post__prevs">
+            <div class="post__prev">
+                
+                <a href="/2018/07/15/welcome/" title="Welcome"><i class="iconfont icon-prev"></i>Welcome</a>
+                
+            </div>
+            <div class="post__prev post__prev--right">
+                
+                <a href="/2018/07/16/hadoop/" title="Hadoop Day 1">Hadoop Day 1<i class="iconfont icon-next"></i></a>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+        
+            <div id="comment-container"></div>
+        
+        
+    </div>
+
+    <aside class="page__sidebar">
+    <!-- 
+        <div class="sidebar__img">
+            <img src="https://s1.ax1x.com/2018/08/08/PsWmg1.jpg" alt="Space-X" title="Space-X">
+        </div>
+     -->
+
+    <form id="page-search-from" class="page__search-from" action="/search/">
+        <label class="search-form__item">
+            <input class="input" type="text" name="search" placeholder="Search...">
+            <i class="iconfont icon-search"></i>
+        </label>
+    </form>
+
+    
+        <div class="sidebar__block">
+            <h3 class="block__title">简介</h3>
+            <p class="block__text">日常学习与兴趣交流的个人博客</p>
+        </div>
+    
+
+    <div class="sidebar__block">
+        <h3 class="block__title">文章分类</h3>
+        <ul class="block-list"><li class="block-list-item"><a class="block-list-link" href="/categories/计算机网络/">计算机网络</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/算法/">算法</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/游玩/">游玩</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/welcome/">welcome</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/hadoop/">hadoop</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/Hbase/">Hbase</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/Hadoop/">Hadoop</a><span class="block-list-count">2</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/Git-版本管理/">Git 版本管理</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/GFW/">GFW</a><span class="block-list-count">1</span></li></ul>
+    </div>
+    
+    <div class="sidebar__block">
+        <h3 class="block__title">最新文章</h3>
+        
+        <ul class="block-list latest-post-list">
+            
+                    <li class="latest-post-item">
+                        <a href="/2019/01/18/alogorithm/" title="Alogorithm">
+                            <div class="item__cover">
+                                <img src="https://s2.ax1x.com/2019/01/18/k9gwCD.jpg" alt="Alogorithm" />
+                            </div>
+                            <div class="item__info">
+                                <h3 class="item__title">Alogorithm</h3>
+                                <span class="item__text">2019-01-18</span>
+                            </div>
+                        </a>
+                    </li>
+                
+                    <li class="latest-post-item">
+                        <a href="/2019/01/18/nanjing/" title="Nanjing">
+                            <div class="item__cover">
+                                <img src="https://s2.ax1x.com/2019/01/19/kCEuX8.jpg" alt="Nanjing" />
+                            </div>
+                            <div class="item__info">
+                                <h3 class="item__title">Nanjing</h3>
+                                <span class="item__text">2019-01-18</span>
+                            </div>
+                        </a>
+                    </li>
+                
+                    <li class="latest-post-item">
+                        <a href="/2018/08/19/hadoop-d-3/" title="Hadoop Day 3">
+                            <div class="item__cover">
+                                <img src="http://wx2.sinaimg.cn/mw690/0060lm7Tly1fuh930qfnrj30ic0ababp.jpeg" alt="Hadoop Day 3" />
+                            </div>
+                            <div class="item__info">
+                                <h3 class="item__title">Hadoop Day 3</h3>
+                                <span class="item__text">2018-08-19</span>
+                            </div>
+                        </a>
+                    </li>
+                
+                    <li class="latest-post-item">
+                        <a href="/2018/08/08/hbase/" title="HBase">
+                            <div class="item__cover">
+                                <img src="https://s1.ax1x.com/2018/08/08/PsDHgO.jpg" alt="HBase" />
+                            </div>
+                            <div class="item__info">
+                                <h3 class="item__title">HBase</h3>
+                                <span class="item__text">2018-08-08</span>
+                            </div>
+                        </a>
+                    </li>
+                
+        </ul>
+    
+    </div>
+
+    <div class="sidebar__block">
+        <h3 class="block__title">文章标签</h3>
+        
+        <ul class="block-list tag-list clearfix">
+            
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Eclipse/">Eclipse</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Google-PageRank/">Google,PageRank</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Great-Firewall/">Great Firewall</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Hadoop/">Hadoop</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Hadoop部署/">Hadoop部署</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Hbase/">Hbase</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Learning/">Learning</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Life/">Life</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Map-Reduce/">Map-Reduce</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/TCP-Socket通信/">TCP,Socket通信</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/git/">git</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/hadoop/">hadoop</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/hobbies/">hobbies</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/linux/">linux</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/love/">love</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/noSQL/">noSQL</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/shadowsocks/">shadowsocks</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/travel/">travel</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/分支定界/">分支定界</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/列式数据库/">列式数据库</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/动态规划/">动态规划</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/版本管理/">版本管理</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/计算机网络/">计算机网络</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/读取数据/">读取数据</a>
+                    </li>  
+                
+        </ul>
+    
+    </div>
+
+    <!-- <div class="sidebar__block">
+        <h3 class="block__title">友情链接</h3>
+        <ul class="block-list">
+            
+        </ul>
+    </div> -->
+</aside>
+</main>
+
+
+        
+            <!-- 页脚 -->
+<footer class="page__footer">
+    <section class="footer__top">
+        <div class="page__container footer__container">
+            
+            <div class="footer-top__item footer-top__item--2">
+                <h3 class="item__title">关于</h3>
+                <div class="item__content">
+                    <p class="item__text">本站是基于 Hexo 搭建的静态资源博客，主要用于分享日常学习、生活及工作的一些心得总结，欢迎点击右下角订阅 rss。</p>
+                    <ul class="footer__contact-info">
+                        <li class="contact-info__item">
+                            <i class="iconfont icon-address"></i>
+                            <span>Dalian, Lianning Province, China</span>
+                        </li>
+                        <li class="contact-info__item">
+                            <i class="iconfont icon-email2"></i>
+                            <span>dlut.weixiang@gmail.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            
+            
+                <div class="footer-top__item footer__image">
+                    <img src="https://s1.ax1x.com/2018/08/08/PsWmg1.jpg" alt="logo" title="Space-X">
+                </div>
+            
+            
+            
+            
+                
+                    <div class="footer-top__item">
+                        <h3 class="item__title">友情链接</h3>
+                        <div class="item__content">
+                            <ul class="footer-top__list">
+                                
+                                    <li class="list-item">
+                                        <a href="https://github.com/Mrminfive/hexo-theme-skapp" title="hexo-theme-skapp" target="_blank">hexo-theme-skapp</a>
+                                    </li>
+                                
+                            </ul>
+                        </div>
+                    </div>
+                
+                    <div class="footer-top__item">
+                        <h3 class="item__title">构建工具</h3>
+                        <div class="item__content">
+                            <ul class="footer-top__list">
+                                
+                                    <li class="list-item">
+                                        <a href="https://hexo.io/" title="Blog Framework" target="_blank">Hexo</a>
+                                    </li>
+                                
+                            </ul>
+                        </div>
+                    </div>
+                
+            
+        </div>
+    </section>
+    <section class="footer__bottom">
+        <div class="page__container footer__container">
+            <p class="footer__copyright">©
+                <a href="https://github.com/Mrminfive/hexo-theme-skapp" target="_blank">Skapp</a> 2017 powered by
+                <a href="http://hexo.io/" target="_blank">Hexo</a>, made by 
+                <a href="https://github.com/Mrminfive" target="_blank">minfive</a>.
+            </p>
+            <ul class="footer__social-network clearfix">
+                
+                
+                    <li class="social-network__item">
+                        <a href="https://github.com/spaces-x" target="_blank" title="github">
+                            <i class="iconfont icon-github"></i>
+                        </a>
+                    </li>
+                
+                    <li class="social-network__item">
+                        <a href="mailto:dlut.weixiang@gmail.com" target="_blank" title="email">
+                            <i class="iconfont icon-email"></i>
+                        </a>
+                    </li>
+                
+                    <li class="social-network__item">
+                        <a href="/atom.xml" target="_blank" title="rss">
+                            <i class="iconfont icon-rss"></i>
+                        </a>
+                    </li>
+                
+                
+            </ul>
+        </div>
+    </section>
+</footer>
+        
+
+        
+            <!-- 返回顶部 -->
+<div id="back-top" class="back-top back-top--hidden js-hidden">
+    <i class="iconfont icon-top"></i>
+</div>
+        
+    </div>
+
+    <!-- build:js /js/common.js -->
+        <script type="text/javascript" src="js/common/utils.js"></script>
+        <script type="text/javascript" src="js/common/pack.js"></script>
+        <script type="text/javascript" src="js/common/animation.js"></script>
+        <script type="text/javascript" src="js/layout/loading.js"></script>
+        <script type="text/javascript" src="js/layout/header.js"></script>
+        <script type="text/javascript" src="js/layout/back-top.js"></script>
+        <script type="text/javascript" src="js/layout/post.js"></script>
+    <!-- endbuild -->
+
+    
+    <script src="/js/page/post.js"></script>
+
+
+    
+    
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script src="/js/md5.min.js"></script>
+
+    <script>
+        var tags = ['TCP,Socket通信', '计算机网络', ];
+
+        var gitalk = new Gitalk({
+            clientID: 'ffb17145b46132415448',
+            clientSecret: '4ea3f05eb857014a3cb50a18b83721e1c7660a06',
+            repo: 'spaces-X.github.io',
+            owner: 'spaces-X',
+            admin: ['s', 'p', 'a', 'c', 'e', 's', '-', 'X', ],
+            labels: tags,
+            id: (new Date(1531712612000)).getTime() > (new Date('2018-02-15')).getTime() ? md5(location.href) : location.href
+        });
+
+        gitalk.render('comment-container');
+    </script>
+
+
+
+
+    <!-- 不蒜子统计 -->
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+
+     
+
+
+
+
+
+
+
+
+</body>
+</html>

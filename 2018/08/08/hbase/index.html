@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    
+        <title>HBase | X-Blog</title>
+    
+
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<meta name="format-detection" content="telephone=no">
+<meta name="author" content="[object Object]" />
+<meta name="designer" content="minfive" />
+<meta name="keywords" content="Xiang blog, 程序员, SCI论文, Python, Hadoop, 深度炼丹"/>
+<meta name="description" content="日常学习与兴趣交流的个人博客" />
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="robots" content="all" />
+
+<link rel="canonical" href="https://spaces-x.github.io/2018/08/08/hbase/index.html">
+
+<link rel="icon" type="image/png" href="https://www.easyicon.net/api/resizeApi.php?id=546977&size=32" sizes="32x32">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Prefetch -->
+
+
+
+
+
+
+<!-- CSS -->
+<link rel="stylesheet" href="/scss/base/index.css">
+
+<!-- RSS -->
+<link rel="alternate" href="/atom.xml" title="Space-X">
+
+<!-- 统计 -->
+<!-- 百度统计 -->
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    
+    
+    <link rel="stylesheet" href="/scss/views/page/post.css">
+
+</head>
+<body ontouchstart>
+    
+        <!-- loading 页面 -->
+<div id="page-loading" class="page page-loading" style="background-image: url('http://oo12ugek5.bkt.clouddn.com/blog/images/loader.gif')"></div>
+    
+
+    <div id="page" class="page js-hidden">
+        
+    <!-- 页头 -->
+<header class="page__small-header page__header--small">
+    <nav class="page__navbar">
+        <div class="page__container navbar-container">
+            <a class="page__logo" href="/" title="Space-X" alt="Space-X">
+                <img src="https://s1.ax1x.com/2018/07/15/PMfvfP.png" alt="Space-X">
+            </a>
+
+            <nav class="page__nav">
+                <ul class="nav__list clearfix">
+                    
+                        
+                        <li class="nav__item">
+                            <a href="/" alt="首页" title="首页">首页</a>
+                        </li>
+                    
+                        
+                        <li class="nav__item">
+                            <a href="/archives" alt="归档" title="归档">归档</a>
+                        </li>
+                    
+                        
+                        <li class="nav__item">
+                            <a href="/about" alt="关于" title="关于">关于</a>
+                        </li>
+                    
+                </ul>
+            </nav>
+
+            <button class="page__menu-btn" type="button">
+                <i class="iconfont icon-menu"></i>
+            </button>
+        </div>
+    </nav>
+</header>
+
+
+        
+    <main class="page__container page__main">
+    <div class="page__content">
+        <article class="page__post">
+    <div class="post__cover">
+        <img src="https://s1.ax1x.com/2018/08/08/PsDHgO.jpg" alt="HBase">
+    </div>
+
+    <header class="post__info">
+        <h1 class="post__title">HBase</h1>
+
+        <div class="post__mark">
+            <div class="mark__block">
+                <i class="mark__icon iconfont icon-write"></i>
+                <ul class="mark__list clearfix">
+                    <li class="mark__item">
+                        <a href="https://www.github.com/spaces-x">WeiXiang</a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="mark__block">
+                <i class="mark__icon iconfont icon-time"></i>
+                <ul class="mark__list clearfix">
+                    <li class="mark__item"><span>2018-08-08</span></li>
+                </ul>
+            </div>
+
+            <div class="mark__block">
+                <i class="mark__icon iconfont icon-tab"></i>
+                <ul class="mark__list clearfix">
+                    
+                        <li class="mark__item">
+                            <a href="/tags/noSQL/">noSQL</a>
+                        </li>
+                    
+                        <li class="mark__item">
+                            <a href="/tags/Hbase/">Hbase</a>
+                        </li>
+                    
+                        <li class="mark__item">
+                            <a href="/tags/列式数据库/">列式数据库</a>
+                        </li>
+                    
+                </ul>
+            </div>
+
+            
+        </div>
+    </header>
+
+    <div class="post__content">
+        <script type="text/javascript" src="toc/js/jquery-1.4.4.min.js"></script>
+<script type="text/javascript" src="toc/js/jquery.ztree.all-3.5.min.js"></script>
+<script type="text/javascript" src="toc/js/ztree_toc.js"></script>
+
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
+
+<h3 id="Hbase安装"><a href="#Hbase安装" class="headerlink" title="Hbase安装"></a>Hbase安装</h3><h4 id="准备环境"><a href="#准备环境" class="headerlink" title="准备环境"></a>准备环境</h4><blockquote>
+<ul>
+<li>Hadoop 集群安装配置</li>
+<li>ZooKeeper 3.4.X 安装和配置</li>
+<li>Hbase 下载解压修改配置文件 散发到集群</li>
+</ul>
+</blockquote>
+<p><a href="https://spaces-x.github.io/2018/07/26/hadoop-d-2/#Hadoop%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2">Hadoop集群安装配置参见</a></p>
+<h4 id="ZooKeeper-3-4-X-安装与配置"><a href="#ZooKeeper-3-4-X-安装与配置" class="headerlink" title="ZooKeeper 3.4.X 安装与配置"></a>ZooKeeper 3.4.X 安装与配置</h4><p>zookeeper有单机、伪分布式集群、完全分布式集群三种部署方式,本文中主要讲解完全分布集群的配置方法，<a href="https://www.cnblogs.com/lsdb/p/7297731.html" target="_blank" rel="noopener">其他两种参见</a></p>
+<p>完全分布式集群中假设我们有三台主机h1 h2 h3, 下载<a href="https://mirrors.tuna.tsinghua.edu.cn/apache/zookeeper/" target="_blank" rel="noopener">ZooKeeper 3.4.X</a><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">tar -xzfv zookeeper-3.4.x.tar.gz -C <span class="string">'安装目录'</span></span><br><span class="line">mkdir -p <span class="string">'预设zookeeper的data目录'</span>(/home/weixiang/data/zookeeper/)</span><br><span class="line">mkdir -p <span class="string">'预设zookeeper的logs目录'</span>(/home/weixiang/logs/zookeeper/)</span><br><span class="line"><span class="built_in">cd</span> <span class="string">'安装目录/ZooKeeper 3.4.X/conf'</span></span><br></pre></td></tr></table></figure></p>
+<p>将zookeeper添加到环境变量中,编辑/etc/profile文件 添加<code>export ZOOKEEPER_HOME=安装目录/zookeeper-3.4.x</code><br><code>export PATH=......:$ZOOKEEPER_HOME/bin</code></p>
+<p>修改zoo_sample.cfg 重命名为zoo.cfg 并开始编辑<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">tickTime=2000</span><br><span class="line">dataDir=对应预设zookeeper的data目录(/home/weixiang/data/zookeeper/)</span><br><span class="line">dataLogDir=对应预设zookeeper的logs目录(/home/weixiang/logs/zookeeper/)</span><br><span class="line">clientPort=2181</span><br><span class="line">initLimit=5</span><br><span class="line">syncLimit=2</span><br><span class="line">server.1=h1:2888:3888</span><br><span class="line">server.2=h2:2888:3888</span><br><span class="line">server.3=h3:2888:3888</span><br></pre></td></tr></table></figure></p>
+<p>通过scp -r “源目录” “目的主机目录” 命令将zookeeper 3.4.X 文件夹整个拷贝到其他节点<br>在每个节点的预设zookeeper的data目录(/home/weixiang/data/zookeeper/)上建立myid文件并写入节点编号(这个编号对应配置文件中的server.X其中的X) 例如在h2 这个节点myid的内容应为2</p>
+<p>运行脚本启动,停止,查看状态<br>在每个安装zookeeper的节点上启动<code>zkServer.sh start</code></p>
+<p>查看状态<code>zkServer.sh status</code> 可以得到以下结果:<br>[hadoop@mdw ~]$ zkServer.sh status<br>JMX enabled by default<br>Using config: ……/../conf/zoo.cfg<br>Mode: follower/leader</p>
+<p>在每个安装zookeeper的节点上停止zookeeper服务<code>zkServer.sh stop</code></p>
+<p>如果出错查看zookeeper.out错误信息</p>
+<h4 id="Hbase的安装与配置"><a href="#Hbase的安装与配置" class="headerlink" title="Hbase的安装与配置"></a>Hbase的安装与配置</h4><p>已在h1 h2 h3 h4 h5上安装好了hadoop: h1 为namenode h2-5 为datanode<br>已在h1 h2 h3上安装好了zookeeper<br>将在h1 h2 h3 上装hbase 并将h1 作为master和regionserver，h2-3作regionserver</p>
+<p>首先要确定hadoop,Hbase,JDK版本兼容的问题,根据<a href="https://hbase.apache.org/book.html#basic.prerequisites" target="_blank" rel="noopener">兼容表格</a>选取合适的版本</p>
+<p>在本文中我们选取的是hbase 1.3.2.1 <a href="https://mirrors.tuna.tsinghua.edu.cn/apache/hbase/" target="_blank" rel="noopener">下载链接</a> </p>
+<p>在h1节点下载,下载后通过 <code>tar -xzvf hbase-1.3.2.1-bin.tar.gz -C &#39;安装目录(例如 /usr/)&#39;</code> 来解压。解压后编辑/usr/hbase-1.3.2.1/conf目录下的hbase-env.sh文件 添加如下内容<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">export JAVA_HOME=/usr/java/jdk1.8.0_172</span><br><span class="line">export HBASE_LOG_DIR=/usr/hbase-1.3.2.1/logs     #日志路径 如果路径不存在先建立路径</span><br><span class="line">export HBASE_MANAGES_ZK=false                    #表示hbase不用内部的zookeeper </span><br><span class="line">export HBASE_CLASSPATH=/usr/hadoop-2.6.5/etc/hadoop #hadoop配置文件所在位置</span><br></pre></td></tr></table></figure></p>
+<p>编辑hbase-site.xml 文件如下<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>hbase.rootdir<span class="tag">&lt;/<span class="name">name</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>hdfs://h1:9000/hbase<span class="tag">&lt;/<span class="name">value</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>hbase.cluster.distributed<span class="tag">&lt;/<span class="name">name</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>true<span class="tag">&lt;/<span class="name">value</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>hbase.zookeeper.quorum<span class="tag">&lt;/<span class="name">name</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>h1,h2,h3<span class="tag">&lt;/<span class="name">value</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>hbase.zookeeper.property.dataDir<span class="tag">&lt;/<span class="name">name</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>/home/weixiang/data/zookeeper<span class="tag">&lt;/<span class="name">value</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>hbase.master<span class="tag">&lt;/<span class="name">name</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">value</span>&gt;</span>hdfs://h1:60000<span class="tag">&lt;/<span class="name">value</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>以上配置文件涉及zookeeper的要与已经装好的zookeeper信息相符合,涉及到hadooop的也要与已装的hadoop相符。</p>
+<p>编辑regionservers文件,将regionservers的主机名添加到文件中<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">h1</span><br><span class="line"></span><br><span class="line">h2</span><br><span class="line"></span><br><span class="line">h3</span><br></pre></td></tr></table></figure></p>
+<p>最后在建立hdfs-site.xml 软连接到hadoop的hdfs-site.xml配置文件<code>ln -s hdfs-site.xml /usr/hadoop-2.6.5/etc/hadoop/hdfs-site.xml</code><br>效果如下</p>
+<p>lrwxrwxrwx. 1 weixiang weixiang   42 Aug  7 18:00 hdfs-site.xml -&gt; /usr/hadoop-2.6.5/etc/hadoop/hdfs-site.xml</p>
+<p>至此hbase配置完成通过<code>scp -r</code>命令将hbase文件夹复制到各个节点的安装目录<br>在各个节点将hbase添加到环境变量中,编辑/etc/profile文件 添加<br><code>export HBASE_HOME=安装目录/hbase-1.3.2.1</code><br><code>export PATH=......:$HBASE_HOME/bin</code></p>
+<h4 id="Hbase-的启动和相关脚本说明"><a href="#Hbase-的启动和相关脚本说明" class="headerlink" title="Hbase 的启动和相关脚本说明"></a>Hbase 的启动和相关脚本说明</h4><p>脚本使用小结：</p>
+<ol>
+<li>开启集群，start-hbase.sh </li>
+<li>关闭集群，stop-hbase.sh </li>
+<li>开启/关闭所有的regionserver、zookeeper，hbase-daemons.sh start/stop regionserver/zookeeper </li>
+<li>开启/关闭单个regionserver、zookeeper，hbase-daemon.sh start/stop regionserver/zookeeper </li>
+<li>开启/关闭master hbase-daemon.sh start/stop master, 是否成为active master取决于当前是否有active master<br>两个进阶脚本 </li>
+<li>rolling-restart.sh 可以用来挨个滚动重启 </li>
+<li>graceful_stop.sh move服务器上的所有region后，再stop/restart该服务器，可以用来进行版本的热升级 </li>
+</ol>
+<p>几个细节： </p>
+<ol>
+<li><p>hbase-daemon.sh start master 与 hbase-daemon.sh start master –backup，这2个命令的作用一样的，是否成为backup或active是由master的内部逻辑来控制的 </p>
+</li>
+<li><p>stop-hbase.sh 不会调用hbase-daemons.sh stop regionserver 来关闭regionserver， 但是会调用hbase-daemons.sh stop zookeeper/master-backup来关闭zk和backup master，关闭regionserver实际调用的是hbaseAdmin的shutdown接口 </p>
+</li>
+<li><p>通过$HBASE_HOME/bin/hbase stop master关闭的是整个集群而非单个master，只关闭单个master的话使用$HBASE_HOME/bin/hbase-daemon.sh stop master </p>
+</li>
+<li><p>$HBASE_HOME/bin/hbase stop regionserver/zookeeper 不能这么调，调了也会出错，也没有路径会调用这个命令，但是可以通过$HBASE_HOME/bin/hbase start regionserver/zookeeper 来启动rs或者zk，hbase-daemon.sh调用的就是这个命令</p>
+</li>
+</ol>
+<p>常用到的HBase启动脚本有： </p>
+<ol>
+<li>$HBASE_HOME/bin/start-hbase.sh<br>启动整个集群 </li>
+<li>$HBASE_HOME/bin/stop-hbase.sh<br>停止整个集群 </li>
+<li>$HBASE_HOME/bin/hbase-daemons.sh<br>启动或停止，所有的regionserver或zookeeper或backup-master </li>
+<li>$HBASE_HOME/bin/hbase-daemon.sh<br>启动或停止，单个master或regionserver或zookeeper </li>
+</ol>
+<p>以start-hbase.sh为起点，可以看看脚本间的一些调用关系 </p>
+<p>start-hbase.sh的流程如下： </p>
+<ol>
+<li>运行hbase-config.sh（作用后面解释） </li>
+<li>解析参数（0.96版本及以后才可以带唯一参数autorestart，作用就是重启） </li>
+<li>调用hbase-daemon.sh来启动master；调用hbase-daemons.sh来启动regionserver zookeeper master-backup </li>
+</ol>
+<p>hbase-config.sh的作用： </p>
+<p>装载相关配置，如HBASE_HOME目录，conf目录，regionserver机器列表，JAVA_HOME目录等，它会调用$HBASE_HOME/conf/hbase-env.sh </p>
+<p>hbase-env.sh的作用： </p>
+<p>主要是配置JVM及其GC参数，还可以配置log目录及参数，配置是否需要hbase管理ZK，配置进程id目录等 </p>
+<p>hbase-daemons.sh的作用： </p>
+<p>根据需要启动的进程，<br>如为zookeeper,则调用zookeepers.sh<br>如为regionserver，则调用regionservers.sh<br>如为master-backup，则调用master-backup.sh </p>
+<p>zookeepers.sh的作用： </p>
+<p>如果hbase-env.sh中的HBASE_MANAGES_ZK” = “true”，那么通过ZKServerTool这个类解析xml配置文件，获取ZK节点列表（即hbase.zookeeper.quorum的配置值），然后通过SSH向这些节点发送远程命令： </p>
+<p>cd ${HBASE_HOME};<br>$bin/hbase-daemon.sh –config ${HBASE_CONF_DIR} start/stop zookeeper </p>
+<p>regionservers.sh的作用： </p>
+<p>与zookeepers.sh类似，通过${HBASE_CONF_DIR}/regionservers配置文件，获取regionserver机器列表，然后SSH向这些机器发送远程命令：<br>cd ${HBASE_HOME};<br>$bin/hbase-daemon.sh –config ${HBASE_CONF_DIR} start/stop regionserver </p>
+<p>hbase-daemon.sh的作用： </p>
+<p>无论是zookeepers.sh还是regionservers.sh或是master-backup.sh，最终都会调用本地的hbase-daemon.sh，其执行过程如下：</p>
+<ol>
+<li>运行hbase-config.sh，装载各种配置（java环境、log配置、进程ID目录等） </li>
+<li>如果是start命令？滚动out输出文件，滚动gc日志文件，日志文件中输出启动时间+ulimit -a信息，如“Mon Nov 26 10:31:42 CST 2012 Starting master on dwxx.yy.taobao””..open files                      (-n) 65536..” </li>
+<li>调用$HBASE_HOME/bin/hbase start master/regionserver/zookeeper </li>
+<li>执行wait，等待3中开启的进程结束 </li>
+<li>执行cleanZNode，将regionserver在zk上登记的节点删除，这样做的目的是：在regionserver进程意外退出的情况下，可以免去3分钟的ZK心跳超时等待，直接由master进行宕机恢复 </li>
+<li>如果是stop命令？<br>根据进程ID，检查进程是否存在；调用kill命令，然后等待到进程不存在为止 </li>
+<li>如果是restart命令？<br>调用stop后，再调用start</li>
+</ol>
+<h4 id="Hbase简介"><a href="#Hbase简介" class="headerlink" title="Hbase简介"></a>Hbase简介</h4><ul>
+<li>HBase是一个分布式的、面向列的开源数据库，该技术来源于Chang et al所撰写的Google论文“Bigtable：一个结构化数据的分布式存储系统”。</li>
+<li>就像Bigtable利用了Google文件系统（File System）所提供的分布式数据存储一样，HBase在Hadoop之上提供了类似于Bigtable的能力，并利用hdfs文件系统作为后端存储</li>
+<li>HBase是Apache的Hadoop 项目的子项目。</li>
+<li>HBase不同于一般的关系数据库,它是一个适合于非结构化数据存储的数据库.另一个不同的是HBase基于列的而不是基于行的模式</li>
+</ul>
+<h4 id="Hbase-逻辑模型"><a href="#Hbase-逻辑模型" class="headerlink" title="Hbase 逻辑模型"></a>Hbase 逻辑模型</h4><p><a href="https://imgchr.com/i/PL5MLQ" target="_blank" rel="noopener"><img src="https://s1.ax1x.com/2018/08/28/PL5MLQ.md.png" alt="PL5MLQ.md.png"></a></p>
+<ul>
+<li>以表的形式存放数据</li>
+<li>表由行与列组成，每个列属于某个列族，由行和列确定的存储单元称为元素</li>
+<li>每个元素保存了同一份数据的多个版本，由时间戳来标识区分</li>
+</ul>
+<p><strong>行建</strong>：行键可以是最大长度不超过64KB的任意字符串，并按照字典序存储<br>对于经常要一起读取的行，要对行键值精心设计，以便它们能放在一起存储</p>
+<ul>
+<li>行键是数据行在表里的唯一标识，并作为检索记录的主键</li>
+<li>访问表里的行只有三种方式<blockquote>
+<p>  1.通过单个行键访问<br>  2.给定行键的范围访问<br>  3.全表扫描   </p>
+</blockquote>
+</li>
+</ul>
+<p><strong>列族与列</strong>：</p>
+<ul>
+<li>列表示为&lt;列族&gt;:&lt;限定符&gt;</li>
+<li>Hbase在磁盘上按照列族存储数据，这种列式数据库的设计非常适合于数据分析的情形</li>
+<li>列族里的元素最好具有相同的读写方式（例如等长的字符串），以提高性能</li>
+<li>在创建表的时候要指定列族的数目，但是列族中限定符的数目（即列的数目）可以不定</li>
+</ul>
+<p><strong>时间戳</strong>：</p>
+<ul>
+<li>对应每次数据操作的时间，可由系统自动生成，也可以由用户显式的赋值</li>
+<li>Hbase支持两种数据版本回收方式：1 每个数据单元，只存储指定个数的最新版本 2 保存指定时间长度的版本（例如7天）</li>
+<li>常见的客户端时间查询：“某个时刻起的最新数据”或“给我全部版本的数据”</li>
+<li>元素由 行键，列族:限定符，时间戳唯一决定</li>
+<li>元素以字节码形式存放，没有类型之分</li>
+</ul>
+<h4 id="Hbase-物理模型"><a href="#Hbase-物理模型" class="headerlink" title="Hbase 物理模型"></a>Hbase 物理模型</h4><p><img src="https://s1.ax1x.com/2018/08/28/PL4crQ.png" alt="PL4crQ.png"></p>
+<p> <strong>物理结构说明：</strong><br> 由于Hbase后端存储采用HDFS，HDFS中很难对文件进行修改操作，即使是最基本的追加append操作也是很难实现的，因此Hbase在修改数据时实际上是插入一个新时间戳的记录，并且Hbase在删除时所做的操作只是打上删除标签，当storefile文件合并的时候再剔除删除项和时间戳过期的记录。   </p>
+<p><strong>Region与RegionServer:</strong></p>
+<ul>
+<li>表在行方向上，按照行键范围划分成若干的Region</li>
+<li>每个表最初只有一个region，当记录数增加到超过某个阈值时，开始分裂成两个region</li>
+<li>物理上所有数据存放在HDFS，由Region服务器提供region的管理</li>
+<li>一台物理节点只能跑一个HRegionServer</li>
+<li>一个Hregionserver可以管理多个表的Region实例</li>
+<li>一个Region实例包括Hlog日志和存放数据的Store</li>
+<li>Hmaster作为总控节点</li>
+<li>Zookeeper负责调度</li>
+</ul>
+<p><strong>HLog：</strong></p>
+<ul>
+<li>用于灾难恢复（掉电、物理介质损坏等）</li>
+<li>预写式日志，记录所有更新操作，操作先记录进日志，数据才会写入  </li>
+</ul>
+<p><strong>-ROOT- 和 .META. 表：</strong><br><img src="https://s1.ax1x.com/2018/08/28/PLI9f0.png" alt="PLI9f0.png"></p>
+<ul>
+<li>HBase中有两张特殊的Table，-ROOT-和.META.</li>
+<li>.META.：记录了用户表的Region信息分布情况，.META.本身可以分布在多个regoin</li>
+<li>-ROOT-：记录了.META.表的Region信息，-ROOT-只有一个region</li>
+<li>Zookeeper中记录了-ROOT-表的location</li>
+</ul>
+<p><strong>Memstore与storefile：</strong></p>
+<ul>
+<li>一个region由多个store组成，每个store包含一个列族的所有数据，这也是为什么Hbase是列式数据库</li>
+<li>Store包括位于把内存的memstore和位于硬盘的storefile</li>
+<li>写操作先写入memstore，当memstore中的数据量达到某个阈值，Hregionserver会启动flashcache进程写入storefile，每次写入形成单独一个storefile</li>
+<li>当storefile文件的数量增长到一定阈值后，系统会进行合并，在合并过程中会进行版本合并和删除工作，形成更大的storefile</li>
+<li>当storefile大小超过一定阈值后，会把当前的region分割为两个，并由Hmaster分配到相应的region服务器，实现负载均衡</li>
+<li>客户端检索数据时，先在memstore找，找不到再找storefile</li>
+</ul>
+<p><strong>Key-Value format:</strong><br><img src="https://s1.ax1x.com/2018/08/28/PLoLZQ.png" alt="PLoLZQ.png"><br>在Hbase中会建立B+树作为索引，B+ tree的叶子节点就是形如上图的key-value,而索引节点现实按照Key中的Row建立索引再逐层按照其他属性如列族(column family)进行索引。 因此相同列族的记录会在同一个子树下。<br>物理模型图解：<br><img src="https://s1.ax1x.com/2018/08/28/PLoda9.png" alt="PLoda9.png"></p>
+<h4 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h4><p><strong>Hbase vs Oracle:</strong></p>
+<ul>
+<li>索引不同造成行为的差异</li>
+<li>Hbase适合大量插入同时又有读的情况</li>
+<li>Hbase的瓶颈是硬盘传输速度，Oracle的瓶颈是硬盘寻道时间,因为Hbase所有操作都可以看作是插入操作而且是大批量的，因此速度取决于与硬盘的传输速度。但是oracle经常要随机读写，update时先找到修改内容对应block装载到内存，修改再回写到硬盘。</li>
+<li>Hbase很适合寻找按照时间排序top n的场景</li>
+<li>Hbase不能复杂的统计适合做简单的key-value查询</li>
+</ul>
+<h4 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章:"></a>参考文章:</h4><blockquote>
+<p>1: <a href="https://spaces-x.github.io/2018/07/26/hadoop-d-2/#Hadoop%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2">https://spaces-x.github.io/2018/07/26/hadoop-d-2/#Hadoop%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2</a><br>2: <a href="https://www.cnblogs.com/lsdb/p/7297731.html" target="_blank" rel="noopener">https://www.cnblogs.com/lsdb/p/7297731.html</a><br>3: <a href="https://blog.csdn.net/gnail_oug/article/details/46981607" target="_blank" rel="noopener">https://blog.csdn.net/gnail_oug/article/details/46981607</a><br>4: <a href="https://www.w3cschool.cn/hbase_doc/" target="_blank" rel="noopener">https://www.w3cschool.cn/hbase_doc/</a><br>5: <a href="https://hbase.apache.org/book.html" target="_blank" rel="noopener">https://hbase.apache.org/book.html</a><br>6: <a href="http://zjushch.iteye.com/blog/1736065" target="_blank" rel="noopener">http://zjushch.iteye.com/blog/1736065</a></p>
+</blockquote>
+
+
+        
+        <div class="post-announce">
+            感谢您的阅读，本文由
+            <a href="https://spaces-x.github.io">Space-X</a>
+            版权所有。如若转载，请注明出处：Space-X（<a href="https://spaces-x.github.io/2018/08/08/hbase/">https://spaces-x.github.io/2018/08/08/hbase/</a>）
+        </div>
+        
+
+        <div class="post__prevs">
+            <div class="post__prev">
+                
+                <a href="/2018/08/01/git/" title="Git"><i class="iconfont icon-prev"></i>Git</a>
+                
+            </div>
+            <div class="post__prev post__prev--right">
+                
+                <a href="/2018/08/19/hadoop-d-3/" title="Hadoop Day 3">Hadoop Day 3<i class="iconfont icon-next"></i></a>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+        
+            <div id="comment-container"></div>
+        
+        
+    </div>
+
+    <aside class="page__sidebar">
+    <!-- 
+        <div class="sidebar__img">
+            <img src="https://s1.ax1x.com/2018/08/08/PsWmg1.jpg" alt="Space-X" title="Space-X">
+        </div>
+     -->
+
+    <form id="page-search-from" class="page__search-from" action="/search/">
+        <label class="search-form__item">
+            <input class="input" type="text" name="search" placeholder="Search...">
+            <i class="iconfont icon-search"></i>
+        </label>
+    </form>
+
+    
+        <div class="sidebar__block">
+            <h3 class="block__title">简介</h3>
+            <p class="block__text">日常学习与兴趣交流的个人博客</p>
+        </div>
+    
+
+    <div class="sidebar__block">
+        <h3 class="block__title">文章分类</h3>
+        <ul class="block-list"><li class="block-list-item"><a class="block-list-link" href="/categories/计算机网络/">计算机网络</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/算法/">算法</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/游玩/">游玩</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/welcome/">welcome</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/hadoop/">hadoop</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/Hbase/">Hbase</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/Hadoop/">Hadoop</a><span class="block-list-count">2</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/Git-版本管理/">Git 版本管理</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/GFW/">GFW</a><span class="block-list-count">1</span></li></ul>
+    </div>
+    
+    <div class="sidebar__block">
+        <h3 class="block__title">最新文章</h3>
+        
+        <ul class="block-list latest-post-list">
+            
+                    <li class="latest-post-item">
+                        <a href="/2019/01/18/alogorithm/" title="Alogorithm">
+                            <div class="item__cover">
+                                <img src="https://s2.ax1x.com/2019/01/18/k9gwCD.jpg" alt="Alogorithm" />
+                            </div>
+                            <div class="item__info">
+                                <h3 class="item__title">Alogorithm</h3>
+                                <span class="item__text">2019-01-18</span>
+                            </div>
+                        </a>
+                    </li>
+                
+                    <li class="latest-post-item">
+                        <a href="/2019/01/18/nanjing/" title="Nanjing">
+                            <div class="item__cover">
+                                <img src="https://s2.ax1x.com/2019/01/19/kCEuX8.jpg" alt="Nanjing" />
+                            </div>
+                            <div class="item__info">
+                                <h3 class="item__title">Nanjing</h3>
+                                <span class="item__text">2019-01-18</span>
+                            </div>
+                        </a>
+                    </li>
+                
+                    <li class="latest-post-item">
+                        <a href="/2018/08/19/hadoop-d-3/" title="Hadoop Day 3">
+                            <div class="item__cover">
+                                <img src="http://wx2.sinaimg.cn/mw690/0060lm7Tly1fuh930qfnrj30ic0ababp.jpeg" alt="Hadoop Day 3" />
+                            </div>
+                            <div class="item__info">
+                                <h3 class="item__title">Hadoop Day 3</h3>
+                                <span class="item__text">2018-08-19</span>
+                            </div>
+                        </a>
+                    </li>
+                
+                    <li class="latest-post-item">
+                        <a href="/2018/08/08/hbase/" title="HBase">
+                            <div class="item__cover">
+                                <img src="https://s1.ax1x.com/2018/08/08/PsDHgO.jpg" alt="HBase" />
+                            </div>
+                            <div class="item__info">
+                                <h3 class="item__title">HBase</h3>
+                                <span class="item__text">2018-08-08</span>
+                            </div>
+                        </a>
+                    </li>
+                
+        </ul>
+    
+    </div>
+
+    <div class="sidebar__block">
+        <h3 class="block__title">文章标签</h3>
+        
+        <ul class="block-list tag-list clearfix">
+            
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Eclipse/">Eclipse</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Google-PageRank/">Google,PageRank</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Great-Firewall/">Great Firewall</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Hadoop/">Hadoop</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Hadoop部署/">Hadoop部署</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Hbase/">Hbase</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Learning/">Learning</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Life/">Life</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Map-Reduce/">Map-Reduce</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/TCP-Socket通信/">TCP,Socket通信</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/git/">git</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/hadoop/">hadoop</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/hobbies/">hobbies</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/linux/">linux</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/love/">love</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/noSQL/">noSQL</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/shadowsocks/">shadowsocks</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/travel/">travel</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/分支定界/">分支定界</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/列式数据库/">列式数据库</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/动态规划/">动态规划</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/版本管理/">版本管理</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/计算机网络/">计算机网络</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/读取数据/">读取数据</a>
+                    </li>  
+                
+        </ul>
+    
+    </div>
+
+    <!-- <div class="sidebar__block">
+        <h3 class="block__title">友情链接</h3>
+        <ul class="block-list">
+            
+        </ul>
+    </div> -->
+</aside>
+</main>
+
+
+        
+            <!-- 页脚 -->
+<footer class="page__footer">
+    <section class="footer__top">
+        <div class="page__container footer__container">
+            
+            <div class="footer-top__item footer-top__item--2">
+                <h3 class="item__title">关于</h3>
+                <div class="item__content">
+                    <p class="item__text">本站是基于 Hexo 搭建的静态资源博客，主要用于分享日常学习、生活及工作的一些心得总结，欢迎点击右下角订阅 rss。</p>
+                    <ul class="footer__contact-info">
+                        <li class="contact-info__item">
+                            <i class="iconfont icon-address"></i>
+                            <span>Dalian, Lianning Province, China</span>
+                        </li>
+                        <li class="contact-info__item">
+                            <i class="iconfont icon-email2"></i>
+                            <span>dlut.weixiang@gmail.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            
+            
+                <div class="footer-top__item footer__image">
+                    <img src="https://s1.ax1x.com/2018/08/08/PsWmg1.jpg" alt="logo" title="Space-X">
+                </div>
+            
+            
+            
+            
+                
+                    <div class="footer-top__item">
+                        <h3 class="item__title">友情链接</h3>
+                        <div class="item__content">
+                            <ul class="footer-top__list">
+                                
+                                    <li class="list-item">
+                                        <a href="https://github.com/Mrminfive/hexo-theme-skapp" title="hexo-theme-skapp" target="_blank">hexo-theme-skapp</a>
+                                    </li>
+                                
+                            </ul>
+                        </div>
+                    </div>
+                
+                    <div class="footer-top__item">
+                        <h3 class="item__title">构建工具</h3>
+                        <div class="item__content">
+                            <ul class="footer-top__list">
+                                
+                                    <li class="list-item">
+                                        <a href="https://hexo.io/" title="Blog Framework" target="_blank">Hexo</a>
+                                    </li>
+                                
+                            </ul>
+                        </div>
+                    </div>
+                
+            
+        </div>
+    </section>
+    <section class="footer__bottom">
+        <div class="page__container footer__container">
+            <p class="footer__copyright">©
+                <a href="https://github.com/Mrminfive/hexo-theme-skapp" target="_blank">Skapp</a> 2017 powered by
+                <a href="http://hexo.io/" target="_blank">Hexo</a>, made by 
+                <a href="https://github.com/Mrminfive" target="_blank">minfive</a>.
+            </p>
+            <ul class="footer__social-network clearfix">
+                
+                
+                    <li class="social-network__item">
+                        <a href="https://github.com/spaces-x" target="_blank" title="github">
+                            <i class="iconfont icon-github"></i>
+                        </a>
+                    </li>
+                
+                    <li class="social-network__item">
+                        <a href="mailto:dlut.weixiang@gmail.com" target="_blank" title="email">
+                            <i class="iconfont icon-email"></i>
+                        </a>
+                    </li>
+                
+                    <li class="social-network__item">
+                        <a href="/atom.xml" target="_blank" title="rss">
+                            <i class="iconfont icon-rss"></i>
+                        </a>
+                    </li>
+                
+                
+            </ul>
+        </div>
+    </section>
+</footer>
+        
+
+        
+            <!-- 返回顶部 -->
+<div id="back-top" class="back-top back-top--hidden js-hidden">
+    <i class="iconfont icon-top"></i>
+</div>
+        
+    </div>
+
+    <!-- build:js /js/common.js -->
+        <script type="text/javascript" src="js/common/utils.js"></script>
+        <script type="text/javascript" src="js/common/pack.js"></script>
+        <script type="text/javascript" src="js/common/animation.js"></script>
+        <script type="text/javascript" src="js/layout/loading.js"></script>
+        <script type="text/javascript" src="js/layout/header.js"></script>
+        <script type="text/javascript" src="js/layout/back-top.js"></script>
+        <script type="text/javascript" src="js/layout/post.js"></script>
+    <!-- endbuild -->
+
+    
+    <script src="/js/page/post.js"></script>
+
+
+    
+    
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script src="/js/md5.min.js"></script>
+
+    <script>
+        var tags = ['noSQL', 'Hbase', '列式数据库', ];
+
+        var gitalk = new Gitalk({
+            clientID: 'ffb17145b46132415448',
+            clientSecret: '4ea3f05eb857014a3cb50a18b83721e1c7660a06',
+            repo: 'spaces-X.github.io',
+            owner: 'spaces-X',
+            admin: ['s', 'p', 'a', 'c', 'e', 's', '-', 'X', ],
+            labels: tags,
+            id: (new Date(1533693430000)).getTime() > (new Date('2018-02-15')).getTime() ? md5(location.href) : location.href
+        });
+
+        gitalk.render('comment-container');
+    </script>
+
+
+
+
+    <!-- 不蒜子统计 -->
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+
+     
+
+
+
+
+
+
+
+
+</body>
+</html>
