@@ -1,1 +1,611 @@
-<!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><title>Git | X-Blog</title><meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="format-detection" content="telephone=no"><meta name="author" content="[object Object]"><meta name="designer" content="minfive"><meta name="keywords" content="Xiang blog, 程序员, SCI论文, Python, Hadoop, 深度炼丹"><meta name="description" content="日常学习与兴趣交流的个人博客"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=yes"><meta name="mobile-web-app-capable" content="yes"><meta name="robots" content="all"><link rel="canonical" href="https://spaces-x.github.io/2018/08/01/git/index.html"><link rel="icon" type="image/png" href="https://www.easyicon.net/api/resizeApi.php?id=546977&size=32" sizes="32x32"><link rel="stylesheet" href="/scss/base/index.css"><link rel="alternate" href="/atom.xml" title="Space-X"><link rel="stylesheet" href="/scss/views/page/post.css"></head><body ontouchstart><div id="page-loading" class="page page-loading" style="background-image:url(http://oo12ugek5.bkt.clouddn.com/blog/images/loader.gif)"></div><div id="page" class="page js-hidden"><header class="page__small-header page__header--small"><nav class="page__navbar"><div class="page__container navbar-container"><a class="page__logo" href="/" title="Space-X" alt="Space-X"><img src="https://s1.ax1x.com/2018/07/15/PMfvfP.png" alt="Space-X"></a><nav class="page__nav"><ul class="nav__list clearfix"><li class="nav__item"><a href="/" alt="首页" title="首页">首页</a></li><li class="nav__item"><a href="/archives" alt="归档" title="归档">归档</a></li><li class="nav__item"><a href="/about" alt="关于" title="关于">关于</a></li></ul></nav><button class="page__menu-btn" type="button"><i class="iconfont icon-menu"></i></button></div></nav></header><main class="page__container page__main"><div class="page__content"><article class="page__post"><div class="post__cover"><img src="https://s1.ax1x.com/2018/08/08/PsDXbd.jpg" alt="Git"></div><header class="post__info"><h1 class="post__title">Git</h1><div class="post__mark"><div class="mark__block"><i class="mark__icon iconfont icon-write"></i><ul class="mark__list clearfix"><li class="mark__item"><a href="https://www.github.com/spaces-x">WeiXiang</a></li></ul></div><div class="mark__block"><i class="mark__icon iconfont icon-time"></i><ul class="mark__list clearfix"><li class="mark__item"><span>2018-08-01</span></li></ul></div><div class="mark__block"><i class="mark__icon iconfont icon-tab"></i><ul class="mark__list clearfix"><li class="mark__item"><a href="/tags/linux/">Linux</a></li><li class="mark__item"><a href="/tags/git/">Git</a></li><li class="mark__item"><a href="/tags/版本管理/">版本管理</a></li></ul></div></div></header><div class="post__content"><h3 id="git-简介"><a href="#git-简介" class="headerlink" title="git 简介"></a>git 简介</h3><p>Git是什么？</p><p>Git是目前世界上最先进的分布式版本控制系统（没有之一）。</p><p>那什么是版本控制系统？<br>如果你用Microsoft Word写过长篇大论，那你一定有这样的经历:<br>&emsp;想删除一个段落，又怕将来想恢复找不回来怎么办？有办法，先把当前文件“另存为……”一个新的Word文件，再接着改，改到一定程度，再“另存为……”一个新文件，这样一直改下去，最后你的Word文档变成了这样：</p><p><img src="https://cdn.liaoxuefeng.com/cdn/files/attachments/0013848606651673ff1c83932d249118bf8fd5c58c15ca2000/0" alt=""></p><p>过了一周，你想找回被删除的文字，但是已经记不清删除前保存在哪个文件里了，只好一个一个文件去找，真麻烦。</p><p>看着一堆乱七八糟的文件，想保留最新的一个，然后把其他的删掉，又怕哪天会用上，还不敢删，真郁闷。</p><p>更要命的是，有些部分需要你的财务同事帮助填写，于是你把文件Copy到U盘里给她（也可能通过Email发送一份给她），然后，你继续修改Word文件。一天后，同事再把Word文件传给你，此时，你必须想想，发给她之后到你收到她的文件期间，你作了哪些改动，得把你的改动和她的部分合并，真困难。</p><p>于是你想，如果有一个软件，不但能自动帮我记录每次文件的改动，还可以让同事协作编辑，这样就不用自己管理一堆类似的文件了，也不需要把文件传来传去。如果想查看某次改动，只需要在软件里瞄一眼就可以，岂不是很方便？</p><p>这个软件用起来就应该像这个样子，能记录每次文件的改动：</p><table><thead><tr><th style="text-align:center">版本</th><th style="text-align:center">文件名</th><th style="text-align:center">用户</th><th style="text-align:center">说明</th><th style="text-align:center">日期</th></tr></thead><tbody><tr><td style="text-align:center">1</td><td style="text-align:center">service.doc</td><td style="text-align:center">张三</td><td style="text-align:center">删除了软件服务条款5</td><td style="text-align:center">7/12 10:38</td></tr><tr><td style="text-align:center">2</td><td style="text-align:center">service.doc</td><td style="text-align:center">张三</td><td style="text-align:center">增加了License人数限制</td><td style="text-align:center">7/12 18:09</td></tr><tr><td style="text-align:center">3</td><td style="text-align:center">service.doc</td><td style="text-align:center">李四</td><td style="text-align:center">财务部门调整了合同金额</td><td style="text-align:center">7/13 9:51</td></tr><tr><td style="text-align:center">4</td><td style="text-align:center">service.doc</td><td style="text-align:center">张三</td><td style="text-align:center">延长了免费升级周期</td><td style="text-align:center">7/14 15:17</td></tr></tbody></table><h3 id="Git工作原理"><a href="#Git工作原理" class="headerlink" title="Git工作原理"></a>Git工作原理</h3><h4 id="工作区（Working-Directory）"><a href="#工作区（Working-Directory）" class="headerlink" title="工作区（Working Directory）"></a>工作区（Working Directory）</h4><p>工作区就是电脑上的一个目录，一般就是项目所在的目录。<br><img src="https://i.loli.net/2018/08/13/5b7170abb887a.png" alt="working directory"></p><h4 id="版本库（Repository）"><a href="#版本库（Repository）" class="headerlink" title="版本库（Repository）"></a>版本库（Repository）</h4><p>工作区有一个隐藏目录.git，这个不算工作区，而是Git的版本库。<br>Git的版本库里存了很多东西，其中最重要的就是称为stage（或者叫index）的暂存区，还有Git为我们自动创建的第一个分支master，以及指向master的一个指针叫HEAD。<br>第一步是用git add把文件添加进去，实际上就是把文件修改添加到暂存区；<br>第二步是用git commit提交更改，实际上就是把暂存区的所有内容提交到当前分支。</p><p><img src="https://cdn.liaoxuefeng.com/cdn/files/attachments/001384907702917346729e9afbf4127b6dfbae9207af016000/0" alt="工作逻辑流程"></p><h3 id="git-常用命令及作用"><a href="#git-常用命令及作用" class="headerlink" title="git 常用命令及作用"></a>git 常用命令及作用</h3><ol><li>任何人在使用git之前，都要提交简单的个人信息，以便git区分不同的提交者身份。<br><code>git config –global user.name “your name”</code><br><code>git config –global user.email yourname@example.com</code></li><li>想新开启一个项目，应该先建立一个目录，然后所有的项目开发内容都在此目录下进行。<br>cd workdir<br><code>git init //产生.git文件夹</code><br><code>git add . //将目录下的所有文件都加入到暂存(index)区</code><br><code>git commit -m &quot;提交信息&quot; //将当前的暂存(index)区提交到版本库的Head所指向的分支</code><br><code>git commit -a //这是一个偷懒的命令，相当于git add .; git commit; 但是不会将新建立的文件add进去 只管修改过的已存在的文件</code></li><li>查看修改<br><code>git diff --cached //查看index file和仓库之间代码的区别的</code><br><code>git diff //如果省略–cached选项的话，就是比较working tree和index file(暂存区)的区别</code><br><code>git status //这个命令在git commit之前有效，表示都有哪些文件发生了改动</code></li><li>查看日志<br><code>git log //查看commit简要日志</code><br><img src="https://s1.ax1x.com/2018/08/14/Pg7NNR.png" alt="log.png"><br><code>git log -p //会输出非常详细的日志内容，包括了每次都做了哪些源码的修改</code><br><img src="https://s1.ax1x.com/2018/08/14/Pg70gK.png" alt="Pg70gK.png"><br>只显示了部分详细信息<br><code>git show $commit_id //显示某个提交提与上一个提交相比的详细信息 包括改了哪里</code><br><img src="https://s1.ax1x.com/2018/08/14/PgO57D.png" alt="PgO57D.png"><br>显示某个分支的详细信息<br><code>git show 分支名</code><br><img src="https://s1.ax1x.com/2018/08/14/PgLgL8.png" alt="PgLgL8.png"><br><code>git show HEAD^ //查看HEAD的父母的信息</code><br><code>git show HEAD^^ //查看HEAD的父母的父母的信息</code><br><code>git show HEAD~4 //查看HEAD上溯4代的信息</code></li><li>分支<br><code>git branch //显示当前都有哪些分支，其中标注*为当前所在分支</code><br><code>git branch experimental //创建一个试验分支，名称叫experimental</code><br><code>git checkout experimental //转移到experimental分支</code><br>如果分支开发成功：修改代码<br><code>git commit -a //在experimental分支改进完代码之后用commit在此分支中进行提交</code><br><code>git checkout master //转移回master分支</code><br><code>git merge experimental //经证实分支开发成功，将exerimental分支合并到主分支</code> <img src="https://s1.ax1x.com/2018/08/14/PgHwIs.png" alt="conflict.png"><br><img src="https://s1.ax1x.com/2018/08/14/PgH3Gt.md.png" alt="a.c"><br>如果冲突需要人为修改冲突的部分,修改后<br><img src="https://s1.ax1x.com/2018/08/14/PgHfo9.png" alt="a.c"><br><code>git commit -a //彻底完成此次分支合并，即提交master分支</code><br>如果合并后没问题可以将experimental分支删除<br><code>git branch -d experimental //因为experimental分支已提交，所以可安全删除此</code><br>如果分支开发失败：<br>git checkout master<br>git branch -D experimental //由于分支被证明失败，因此使用-D来放弃并删除该分支</li><li>图形化界面<br><code>gitk</code><br>在5中gitk的效果<br><img src="https://s1.ax1x.com/2018/08/14/PgbkwQ.png" alt="PgbkwQ.png"><br><code>gitk –since=”2 weeks ago” drivers/</code> 将在GUI中显示自2周前到现在为止的且位于drivers目录下的分支记录信息</li><li>拉取<br>我如果非常非常信任bob的开发能力：<br><code>git pull /home/bob/myrepo</code><br>pull命令的意思是从远端git仓库中取出然后合并(git-merge)到我（rocrocket）的项目中去。git-pull命令有可能会因为/home/bob的目录权限问题而被拒绝，解决方法是<code>chmod o+rx /home/bob</code><br>如果我不是很信任bob的开发能力：<br><code>git fetch /home/bob/myrepo master:bobworks</code><br>此命令意思是提取出bob修改的代码内容，然后放到我（rocrocket）工作目录下的bobworks分支中。之所以要放到分支中，而不是master中，就是要我先仔仔细细看看bob的开发成果，如果我觉得满意，我再merge到master中，如果不满意，我完全可以直接git branch -D掉。<br><code>git whatchanged -p master..bobworks //用来查看bob都做了什么</code><br><code>git checkout master //切换到master分区</code><br><code>git pull . bobworks //如果我检查了bob的工作后很满意，就可以用pull来将bobworks分支合并到我的项目中了</code><br><code>git branch -D bobworks //如果我检查了bob的工作后很不满意，就可以用-D来放弃这个分支就可以了</code><br>过了几天，bob如果想继续帮助我开发，他需要先同步一下我这几天的工作成果，只要在其当初clone的myrepo目录下执行git pull即可：<br><code>git pull //不用加任何参数，因为当初clone的时候，git已经记住了我（rocrocket）的工作目录，它会直接找到我的目录来取。</code></li><li>远端库<br>git 不仅可以保存在本地还可以上传到远端的github库,为了方便上传我们首先<a href="https://blog.csdn.net/qq_35246620/article/details/69061355" target="_blank" rel="noopener">配置ssh传输密钥</a><br>为本地git库添加远端库<br><code>git remote add origin 远端库路径(例如git@github.com:spaces-X/paper_version.git)</code><br>从本地push到远端库<br><code>git push origin 源(本地)分支:目的(远端库)分支</code><br><a href="https://imgchr.com/i/PgbytA" target="_blank" rel="noopener"><img src="https://s1.ax1x.com/2018/08/14/PgbytA.md.png" alt="PgbytA.md.png"></a><br>在上图中我们可以看到 本地HEAD-&gt;master比远端的origin-&gt;master先进了一个版本采用上述命令来同步远端库<br>从远端库拉取到本地<br><code>git fetch origin 源(远端)分支:目的(本地)分支</code><br><code>git checkout master //切换到本地master分支上</code><br><code>git merge 分支 //合并分支到master</code></li><li><p>Tag与搜索<br><code>git tag V3 $commit_id 以后可以用V3来代替复杂的名称commit_id</code><br><img src="https://s1.ax1x.com/2018/08/14/PgOVFH.png" alt="tag.png"></p><p>可以用git grep帮助我们搜索：<br><code>git grep “print” V3 //在V3中搜索所有的包含print的行</code><br><code>git grep “print” //在所有的历史记录中搜索包含print的行</code><br><code>git log V3..V7 //显示V3之后直至V7的所有历史记录</code><br><code>git log –since=”2 weeks ago”</code> //显示2周前到现在的所有历史记录。具体语法可查询git-ref-parse命令的帮助文件。</p></li></ol><div class="post-announce">感谢您的阅读，本文由 <a href="https://spaces-x.github.io">Space-X</a> 版权所有。如若转载，请注明出处：Space-X（<a href="https://spaces-x.github.io/2018/08/01/git/">https://spaces-x.github.io/2018/08/01/git/</a>）</div><div class="post__prevs"><div class="post__prev"><a href="/2018/07/26/hadoop-d-2/" title="Hadoop Day 2"><i class="iconfont icon-prev"></i>Hadoop Day 2</a></div><div class="post__prev post__prev--right"><a href="/2018/08/08/hbase/" title="HBase">HBase<i class="iconfont icon-next"></i></a></div></div></div></article></div><aside class="page__sidebar"><form id="page-search-from" class="page__search-from" action="/search/"><label class="search-form__item"><input class="input" type="text" name="search" placeholder="Search..."> <i class="iconfont icon-search"></i></label></form><div class="sidebar__block"><h3 class="block__title">简介</h3><p class="block__text">日常学习与兴趣交流的个人博客</p></div><div class="sidebar__block"><h3 class="block__title">文章分类</h3><ul class="block-list"><li class="block-list-item"><a class="block-list-link" href="/categories/计算机网络/">计算机网络</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/算法/">算法</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/游玩/">游玩</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/welcome/">welcome</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/java设计模式/">java设计模式</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/hadoop/">hadoop</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/OS/">OS</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/Hbase/">Hbase</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/Hadoop/">Hadoop</a><span class="block-list-count">2</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/Git-版本管理/">Git 版本管理</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/GFW/">GFW</a><span class="block-list-count">1</span></li></ul></div><div class="sidebar__block"><h3 class="block__title">最新文章</h3><ul class="block-list latest-post-list"><li class="latest-post-item"><a href="/2019/04/04/memorypaging/" title="Memory Paging"><div class="item__cover"><img src="https://s2.ax1x.com/2019/04/04/A2ifUO.md.jpg" alt="Memory Paging"></div><div class="item__info"><h3 class="item__title">Memory Paging</h3><span class="item__text">2019-04-04</span></div></a></li><li class="latest-post-item"><a href="/2019/03/31/DecoratorMode/" title="DecoratorMode"><div class="item__cover"><img src="https://s2.ax1x.com/2019/03/31/ArQrQJ.md.jpg" alt="DecoratorMode"></div><div class="item__info"><h3 class="item__title">DecoratorMode</h3><span class="item__text">2019-03-31</span></div></a></li><li class="latest-post-item"><a href="/2019/01/18/alogorithm/" title="Algorithm1"><div class="item__cover"><img src="https://s2.ax1x.com/2019/01/18/k9gwCD.jpg" alt="Algorithm1"></div><div class="item__info"><h3 class="item__title">Algorithm1</h3><span class="item__text">2019-01-18</span></div></a></li><li class="latest-post-item"><a href="/2019/01/18/nanjing/" title="Nanjing"><div class="item__cover"><img src="https://s2.ax1x.com/2019/01/19/kCEuX8.jpg" alt="Nanjing"></div><div class="item__info"><h3 class="item__title">Nanjing</h3><span class="item__text">2019-01-18</span></div></a></li></ul></div><div class="sidebar__block"><h3 class="block__title">文章标签</h3><ul class="block-list tag-list clearfix"><li class="tag-item"><a class="tag-link" href="/tags/Eclipse/">Eclipse</a></li><li class="tag-item"><a class="tag-link" href="/tags/Google-PageRank/">Google,PageRank</a></li><li class="tag-item"><a class="tag-link" href="/tags/Great-Firewall/">Great Firewall</a></li><li class="tag-item"><a class="tag-link" href="/tags/Hadoop/">Hadoop</a></li><li class="tag-item"><a class="tag-link" href="/tags/Hadoop部署/">Hadoop部署</a></li><li class="tag-item"><a class="tag-link" href="/tags/Hbase/">Hbase</a></li><li class="tag-item"><a class="tag-link" href="/tags/Learning/">Learning</a></li><li class="tag-item"><a class="tag-link" href="/tags/Life/">Life</a></li><li class="tag-item"><a class="tag-link" href="/tags/Map-Reduce/">Map-Reduce</a></li><li class="tag-item"><a class="tag-link" href="/tags/TCP-Socket通信/">TCP,Socket通信</a></li><li class="tag-item"><a class="tag-link" href="/tags/git/">git</a></li><li class="tag-item"><a class="tag-link" href="/tags/hadoop/">hadoop</a></li><li class="tag-item"><a class="tag-link" href="/tags/hobbies/">hobbies</a></li><li class="tag-item"><a class="tag-link" href="/tags/java/">java</a></li><li class="tag-item"><a class="tag-link" href="/tags/linux/">linux</a></li><li class="tag-item"><a class="tag-link" href="/tags/love/">love</a></li><li class="tag-item"><a class="tag-link" href="/tags/memory/">memory</a></li><li class="tag-item"><a class="tag-link" href="/tags/noSQL/">noSQL</a></li><li class="tag-item"><a class="tag-link" href="/tags/paging/">paging</a></li><li class="tag-item"><a class="tag-link" href="/tags/shadowsocks/">shadowsocks</a></li><li class="tag-item"><a class="tag-link" href="/tags/travel/">travel</a></li><li class="tag-item"><a class="tag-link" href="/tags/分支定界/">分支定界</a></li><li class="tag-item"><a class="tag-link" href="/tags/列式数据库/">列式数据库</a></li><li class="tag-item"><a class="tag-link" href="/tags/动态规划/">动态规划</a></li><li class="tag-item"><a class="tag-link" href="/tags/版本管理/">版本管理</a></li><li class="tag-item"><a class="tag-link" href="/tags/装饰器模式/">装饰器模式</a></li><li class="tag-item"><a class="tag-link" href="/tags/计算机网络/">计算机网络</a></li><li class="tag-item"><a class="tag-link" href="/tags/读取数据/">读取数据</a></li></ul></div></aside></main><footer class="page__footer"><section class="footer__top"><div class="page__container footer__container"><div class="footer-top__item footer-top__item--2"><h3 class="item__title">关于</h3><div class="item__content"><p class="item__text">本站是基于 Hexo 搭建的静态资源博客，主要用于分享日常学习、生活及工作的一些心得总结，欢迎点击右下角订阅 rss。</p><ul class="footer__contact-info"><li class="contact-info__item"><i class="iconfont icon-address"></i> <span>Dalian, Lianning Province, China</span></li><li class="contact-info__item"><i class="iconfont icon-email2"></i> <span>dlut.weixiang@gmail.com</span></li></ul></div></div><div class="footer-top__item footer__image"><img src="https://s1.ax1x.com/2018/08/08/PsWmg1.jpg" alt="logo" title="Space-X"></div><div class="footer-top__item"><h3 class="item__title">友情链接</h3><div class="item__content"><ul class="footer-top__list"><li class="list-item"><a href="https://github.com/Mrminfive/hexo-theme-skapp" title="hexo-theme-skapp" target="_blank">hexo-theme-skapp</a></li></ul></div></div><div class="footer-top__item"><h3 class="item__title">构建工具</h3><div class="item__content"><ul class="footer-top__list"><li class="list-item"><a href="https://hexo.io/" title="Blog Framework" target="_blank">Hexo</a></li></ul></div></div></div></section><section class="footer__bottom"><div class="page__container footer__container"><p class="footer__copyright">© <a href="https://github.com/Mrminfive/hexo-theme-skapp" target="_blank">Skapp</a> 2017 powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, made by <a href="https://github.com/Mrminfive" target="_blank">minfive</a>.</p><ul class="footer__social-network clearfix"><li class="social-network__item"><a href="https://github.com/spaces-x" target="_blank" title="github"><i class="iconfont icon-github"></i></a></li><li class="social-network__item"><a href="mailto:dlut.weixiang@gmail.com" target="_blank" title="email"><i class="iconfont icon-email"></i></a></li><li class="social-network__item"><a href="/atom.xml" target="_blank" title="rss"><i class="iconfont icon-rss"></i></a></li></ul></div></section></footer><div id="back-top" class="back-top back-top--hidden js-hidden"><i class="iconfont icon-top"></i></div></div><script src="/js/common.js"></script><script src="/js/page/post.js"></script><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    
+        <title>Git | X-Blog</title>
+    
+
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<meta name="format-detection" content="telephone=no">
+<meta name="author" content="[object Object]" />
+<meta name="designer" content="minfive" />
+<meta name="keywords" content="Xiang blog, 程序员, SCI论文, Python, Hadoop, 深度炼丹"/>
+<meta name="description" content="日常学习与兴趣交流的个人博客" />
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="robots" content="all" />
+
+<link rel="canonical" href="https://spaces-x.github.io/2018/08/01/git/index.html">
+
+<link rel="icon" type="image/png" href="https://www.easyicon.net/api/resizeApi.php?id=546977&size=32" sizes="32x32">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Prefetch -->
+
+
+
+
+
+
+<!-- CSS -->
+<link rel="stylesheet" href="/scss/base/index.css">
+
+<!-- RSS -->
+<link rel="alternate" href="/atom.xml" title="Space-X">
+
+<!-- 统计 -->
+<!-- 百度统计 -->
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    
+    
+    <link rel="stylesheet" href="/scss/views/page/post.css">
+
+</head>
+<body ontouchstart>
+    
+        <!-- loading 页面 -->
+<div id="page-loading" class="page page-loading" style="background-image: url('http://oo12ugek5.bkt.clouddn.com/blog/images/loader.gif')"></div>
+    
+
+    <div id="page" class="page js-hidden">
+        
+    <!-- 页头 -->
+<header class="page__small-header page__header--small">
+    <nav class="page__navbar">
+        <div class="page__container navbar-container">
+            <a class="page__logo" href="/" title="Space-X" alt="Space-X">
+                <img src="https://s1.ax1x.com/2018/07/15/PMfvfP.png" alt="Space-X">
+            </a>
+
+            <nav class="page__nav">
+                <ul class="nav__list clearfix">
+                    
+                        
+                        <li class="nav__item">
+                            <a href="/" alt="首页" title="首页">首页</a>
+                        </li>
+                    
+                        
+                        <li class="nav__item">
+                            <a href="/archives" alt="归档" title="归档">归档</a>
+                        </li>
+                    
+                        
+                        <li class="nav__item">
+                            <a href="/about" alt="关于" title="关于">关于</a>
+                        </li>
+                    
+                </ul>
+            </nav>
+
+            <button class="page__menu-btn" type="button">
+                <i class="iconfont icon-menu"></i>
+            </button>
+        </div>
+    </nav>
+</header>
+
+
+        
+    <main class="page__container page__main">
+    <div class="page__content">
+        <article class="page__post">
+    <div class="post__cover">
+        <img src="https://s1.ax1x.com/2018/08/08/PsDXbd.jpg" alt="Git">
+    </div>
+
+    <header class="post__info">
+        <h1 class="post__title">Git</h1>
+
+        <div class="post__mark">
+            <div class="mark__block">
+                <i class="mark__icon iconfont icon-write"></i>
+                <ul class="mark__list clearfix">
+                    <li class="mark__item">
+                        <a href="https://www.github.com/spaces-x">WeiXiang</a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="mark__block">
+                <i class="mark__icon iconfont icon-time"></i>
+                <ul class="mark__list clearfix">
+                    <li class="mark__item"><span>2018-08-01</span></li>
+                </ul>
+            </div>
+
+            <div class="mark__block">
+                <i class="mark__icon iconfont icon-tab"></i>
+                <ul class="mark__list clearfix">
+                    
+                        <li class="mark__item">
+                            <a href="/tags/linux/">Linux</a>
+                        </li>
+                    
+                        <li class="mark__item">
+                            <a href="/tags/git/">Git</a>
+                        </li>
+                    
+                        <li class="mark__item">
+                            <a href="/tags/版本管理/">版本管理</a>
+                        </li>
+                    
+                </ul>
+            </div>
+
+            
+        </div>
+    </header>
+
+    <div class="post__content">
+        <h3 id="git-简介"><a href="#git-简介" class="headerlink" title="git 简介"></a>git 简介</h3><p>Git是什么？</p>
+<p>Git是目前世界上最先进的分布式版本控制系统（没有之一）。</p>
+<p>那什么是版本控制系统？<br>如果你用Microsoft Word写过长篇大论，那你一定有这样的经历:<br>&emsp;想删除一个段落，又怕将来想恢复找不回来怎么办？有办法，先把当前文件“另存为……”一个新的Word文件，再接着改，改到一定程度，再“另存为……”一个新文件，这样一直改下去，最后你的Word文档变成了这样：</p>
+<p><img src="https://cdn.liaoxuefeng.com/cdn/files/attachments/0013848606651673ff1c83932d249118bf8fd5c58c15ca2000/0" alt=""></p>
+<p>过了一周，你想找回被删除的文字，但是已经记不清删除前保存在哪个文件里了，只好一个一个文件去找，真麻烦。</p>
+<p>看着一堆乱七八糟的文件，想保留最新的一个，然后把其他的删掉，又怕哪天会用上，还不敢删，真郁闷。</p>
+<p>更要命的是，有些部分需要你的财务同事帮助填写，于是你把文件Copy到U盘里给她（也可能通过Email发送一份给她），然后，你继续修改Word文件。一天后，同事再把Word文件传给你，此时，你必须想想，发给她之后到你收到她的文件期间，你作了哪些改动，得把你的改动和她的部分合并，真困难。</p>
+<p>于是你想，如果有一个软件，不但能自动帮我记录每次文件的改动，还可以让同事协作编辑，这样就不用自己管理一堆类似的文件了，也不需要把文件传来传去。如果想查看某次改动，只需要在软件里瞄一眼就可以，岂不是很方便？</p>
+<p>这个软件用起来就应该像这个样子，能记录每次文件的改动：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">版本</th>
+<th style="text-align:center">文件名</th>
+<th style="text-align:center">用户</th>
+<th style="text-align:center">说明</th>
+<th style="text-align:center">日期</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">service.doc</td>
+<td style="text-align:center">张三</td>
+<td style="text-align:center">删除了软件服务条款5</td>
+<td style="text-align:center">7/12 10:38</td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:center">service.doc</td>
+<td style="text-align:center">张三</td>
+<td style="text-align:center">增加了License人数限制</td>
+<td style="text-align:center">7/12 18:09</td>
+</tr>
+<tr>
+<td style="text-align:center">3</td>
+<td style="text-align:center">service.doc</td>
+<td style="text-align:center">李四</td>
+<td style="text-align:center">财务部门调整了合同金额</td>
+<td style="text-align:center">7/13 9:51</td>
+</tr>
+<tr>
+<td style="text-align:center">4</td>
+<td style="text-align:center">service.doc</td>
+<td style="text-align:center">张三</td>
+<td style="text-align:center">延长了免费升级周期</td>
+<td style="text-align:center">7/14 15:17</td>
+</tr>
+</tbody>
+</table>
+<h3 id="Git工作原理"><a href="#Git工作原理" class="headerlink" title="Git工作原理"></a>Git工作原理</h3><h4 id="工作区（Working-Directory）"><a href="#工作区（Working-Directory）" class="headerlink" title="工作区（Working Directory）"></a>工作区（Working Directory）</h4><p>工作区就是电脑上的一个目录，一般就是项目所在的目录。<br><img src="https://i.loli.net/2018/08/13/5b7170abb887a.png" alt="working directory"></p>
+<h4 id="版本库（Repository）"><a href="#版本库（Repository）" class="headerlink" title="版本库（Repository）"></a>版本库（Repository）</h4><p>工作区有一个隐藏目录.git，这个不算工作区，而是Git的版本库。<br>Git的版本库里存了很多东西，其中最重要的就是称为stage（或者叫index）的暂存区，还有Git为我们自动创建的第一个分支master，以及指向master的一个指针叫HEAD。<br>第一步是用git add把文件添加进去，实际上就是把文件修改添加到暂存区；<br>第二步是用git commit提交更改，实际上就是把暂存区的所有内容提交到当前分支。</p>
+<p><img src="https://cdn.liaoxuefeng.com/cdn/files/attachments/001384907702917346729e9afbf4127b6dfbae9207af016000/0" alt="工作逻辑流程"></p>
+<h3 id="git-常用命令及作用"><a href="#git-常用命令及作用" class="headerlink" title="git 常用命令及作用"></a>git 常用命令及作用</h3><ol>
+<li>任何人在使用git之前，都要提交简单的个人信息，以便git区分不同的提交者身份。<br><code>git config –global user.name “your name”</code><br><code>git config –global user.email yourname@example.com</code></li>
+<li>想新开启一个项目，应该先建立一个目录，然后所有的项目开发内容都在此目录下进行。<br>cd workdir<br><code>git init  //产生.git文件夹</code><br><code>git add . //将目录下的所有文件都加入到暂存(index)区</code><br><code>git commit -m &quot;提交信息&quot; //将当前的暂存(index)区提交到版本库的Head所指向的分支</code><br><code>git commit -a //这是一个偷懒的命令，相当于git add .; git commit; 但是不会将新建立的文件add进去 只管修改过的已存在的文件</code></li>
+<li>查看修改<br><code>git diff --cached //查看index file和仓库之间代码的区别的</code><br><code>git diff          //如果省略–cached选项的话，就是比较working tree和index file(暂存区)的区别</code><br><code>git status  //这个命令在git commit之前有效，表示都有哪些文件发生了改动</code></li>
+<li>查看日志<br><code>git log     //查看commit简要日志</code><br><img src="https://s1.ax1x.com/2018/08/14/Pg7NNR.png" alt="log.png"><br><code>git log -p  //会输出非常详细的日志内容，包括了每次都做了哪些源码的修改</code><br><img src="https://s1.ax1x.com/2018/08/14/Pg70gK.png" alt="Pg70gK.png"><br>只显示了部分详细信息<br><code>git show $commit_id //显示某个提交提与上一个提交相比的详细信息 包括改了哪里</code><br><img src="https://s1.ax1x.com/2018/08/14/PgO57D.png" alt="PgO57D.png"><br>显示某个分支的详细信息<br><code>git show 分支名</code><br><img src="https://s1.ax1x.com/2018/08/14/PgLgL8.png" alt="PgLgL8.png"><br><code>git show HEAD^ //查看HEAD的父母的信息</code><br><code>git show HEAD^^ //查看HEAD的父母的父母的信息</code><br><code>git show HEAD~4 //查看HEAD上溯4代的信息</code>  </li>
+<li>分支<br><code>git branch //显示当前都有哪些分支，其中标注*为当前所在分支</code><br><code>git branch experimental //创建一个试验分支，名称叫experimental</code><br><code>git checkout experimental //转移到experimental分支</code><br>如果分支开发成功：修改代码<br><code>git commit -a //在experimental分支改进完代码之后用commit在此分支中进行提交</code><br><code>git checkout master //转移回master分支</code><br><code>git merge experimental //经证实分支开发成功，将exerimental分支合并到主分支</code>  <img src="https://s1.ax1x.com/2018/08/14/PgHwIs.png" alt="conflict.png"><br><img src="https://s1.ax1x.com/2018/08/14/PgH3Gt.md.png" alt="a.c"><br>如果冲突需要人为修改冲突的部分,修改后<br><img src="https://s1.ax1x.com/2018/08/14/PgHfo9.png" alt="a.c"><br><code>git commit -a //彻底完成此次分支合并，即提交master分支</code><br>如果合并后没问题可以将experimental分支删除<br><code>git branch -d experimental //因为experimental分支已提交，所以可安全删除此</code><br>如果分支开发失败：<br>git checkout master<br>git branch -D experimental //由于分支被证明失败，因此使用-D来放弃并删除该分支</li>
+<li>图形化界面<br><code>gitk</code><br>在5中gitk的效果<br><img src="https://s1.ax1x.com/2018/08/14/PgbkwQ.png" alt="PgbkwQ.png"><br><code>gitk –since=”2 weeks ago” drivers/</code>   将在GUI中显示自2周前到现在为止的且位于drivers目录下的分支记录信息  </li>
+<li>拉取<br>我如果非常非常信任bob的开发能力：<br><code>git pull /home/bob/myrepo</code><br>pull命令的意思是从远端git仓库中取出然后合并(git-merge)到我（rocrocket）的项目中去。git-pull命令有可能会因为/home/bob的目录权限问题而被拒绝，解决方法是<code>chmod o+rx /home/bob</code><br>如果我不是很信任bob的开发能力：<br><code>git fetch /home/bob/myrepo master:bobworks</code><br>此命令意思是提取出bob修改的代码内容，然后放到我（rocrocket）工作目录下的bobworks分支中。之所以要放到分支中，而不是master中，就是要我先仔仔细细看看bob的开发成果，如果我觉得满意，我再merge到master中，如果不满意，我完全可以直接git branch -D掉。<br><code>git whatchanged -p master..bobworks //用来查看bob都做了什么</code><br><code>git checkout master //切换到master分区</code><br><code>git pull . bobworks //如果我检查了bob的工作后很满意，就可以用pull来将bobworks分支合并到我的项目中了</code><br><code>git branch -D bobworks //如果我检查了bob的工作后很不满意，就可以用-D来放弃这个分支就可以了</code><br>过了几天，bob如果想继续帮助我开发，他需要先同步一下我这几天的工作成果，只要在其当初clone的myrepo目录下执行git pull即可：<br><code>git pull //不用加任何参数，因为当初clone的时候，git已经记住了我（rocrocket）的工作目录，它会直接找到我的目录来取。</code>  </li>
+<li>远端库<br>git 不仅可以保存在本地还可以上传到远端的github库,为了方便上传我们首先<a href="https://blog.csdn.net/qq_35246620/article/details/69061355" target="_blank" rel="noopener">配置ssh传输密钥</a><br>为本地git库添加远端库<br><code>git remote add origin 远端库路径(例如git@github.com:spaces-X/paper_version.git)</code><br>从本地push到远端库<br><code>git push origin 源(本地)分支:目的(远端库)分支</code><br><a href="https://imgchr.com/i/PgbytA" target="_blank" rel="noopener"><img src="https://s1.ax1x.com/2018/08/14/PgbytA.md.png" alt="PgbytA.md.png"></a><br>在上图中我们可以看到 本地HEAD-&gt;master比远端的origin-&gt;master先进了一个版本采用上述命令来同步远端库<br>从远端库拉取到本地<br><code>git fetch origin 源(远端)分支:目的(本地)分支</code><br><code>git checkout master //切换到本地master分支上</code><br><code>git merge 分支      //合并分支到master</code>  </li>
+<li><p>Tag与搜索<br><code>git tag V3 $commit_id  以后可以用V3来代替复杂的名称commit_id</code><br><img src="https://s1.ax1x.com/2018/08/14/PgOVFH.png" alt="tag.png">  </p>
+<p>可以用git grep帮助我们搜索：<br><code>git grep “print” V3 //在V3中搜索所有的包含print的行</code><br><code>git grep “print” //在所有的历史记录中搜索包含print的行</code><br><code>git log V3..V7   //显示V3之后直至V7的所有历史记录</code><br><code>git log –since=”2 weeks ago”</code> //显示2周前到现在的所有历史记录。具体语法可查询git-ref-parse命令的帮助文件。</p>
+</li>
+</ol>
+
+
+        
+        <div class="post-announce">
+            感谢您的阅读，本文由
+            <a href="https://spaces-x.github.io">Space-X</a>
+            版权所有。如若转载，请注明出处：Space-X（<a href="https://spaces-x.github.io/2018/08/01/git/">https://spaces-x.github.io/2018/08/01/git/</a>）
+        </div>
+        
+
+        <div class="post__prevs">
+            <div class="post__prev">
+                
+                <a href="/2018/07/26/hadoop-d-2/" title="Hadoop Day 2"><i class="iconfont icon-prev"></i>Hadoop Day 2</a>
+                
+            </div>
+            <div class="post__prev post__prev--right">
+                
+                <a href="/2018/08/08/hbase/" title="HBase">HBase<i class="iconfont icon-next"></i></a>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+        
+        
+    </div>
+
+    <aside class="page__sidebar">
+    <!-- 
+        <div class="sidebar__img">
+            <img src="https://s1.ax1x.com/2018/08/08/PsWmg1.jpg" alt="Space-X" title="Space-X">
+        </div>
+     -->
+
+    <form id="page-search-from" class="page__search-from" action="/search/">
+        <label class="search-form__item">
+            <input class="input" type="text" name="search" placeholder="Search...">
+            <i class="iconfont icon-search"></i>
+        </label>
+    </form>
+
+    
+        <div class="sidebar__block">
+            <h3 class="block__title">简介</h3>
+            <p class="block__text">日常学习与兴趣交流的个人博客</p>
+        </div>
+    
+
+    <div class="sidebar__block">
+        <h3 class="block__title">文章分类</h3>
+        <ul class="block-list"><li class="block-list-item"><a class="block-list-link" href="/categories/计算机网络/">计算机网络</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/算法/">算法</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/游玩/">游玩</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/welcome/">welcome</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/java设计模式/">java设计模式</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/hadoop/">hadoop</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/OS/">OS</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/Hbase/">Hbase</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/Hadoop/">Hadoop</a><span class="block-list-count">2</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/Git-版本管理/">Git 版本管理</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/GFW/">GFW</a><span class="block-list-count">1</span></li></ul>
+    </div>
+    
+    <div class="sidebar__block">
+        <h3 class="block__title">最新文章</h3>
+        
+        <ul class="block-list latest-post-list">
+            
+                    <li class="latest-post-item">
+                        <a href="/2019/04/04/memorypaging/" title="Memory Paging">
+                            <div class="item__cover">
+                                <img src="https://s2.ax1x.com/2019/04/04/A2ifUO.md.jpg" alt="Memory Paging" />
+                            </div>
+                            <div class="item__info">
+                                <h3 class="item__title">Memory Paging</h3>
+                                <span class="item__text">2019-04-04</span>
+                            </div>
+                        </a>
+                    </li>
+                
+                    <li class="latest-post-item">
+                        <a href="/2019/03/31/DecoratorMode/" title="DecoratorMode">
+                            <div class="item__cover">
+                                <img src="https://s2.ax1x.com/2019/03/31/ArQrQJ.md.jpg" alt="DecoratorMode" />
+                            </div>
+                            <div class="item__info">
+                                <h3 class="item__title">DecoratorMode</h3>
+                                <span class="item__text">2019-03-31</span>
+                            </div>
+                        </a>
+                    </li>
+                
+                    <li class="latest-post-item">
+                        <a href="/2019/01/18/alogorithm/" title="Algorithm1">
+                            <div class="item__cover">
+                                <img src="https://s2.ax1x.com/2019/01/18/k9gwCD.jpg" alt="Algorithm1" />
+                            </div>
+                            <div class="item__info">
+                                <h3 class="item__title">Algorithm1</h3>
+                                <span class="item__text">2019-01-18</span>
+                            </div>
+                        </a>
+                    </li>
+                
+                    <li class="latest-post-item">
+                        <a href="/2019/01/18/nanjing/" title="Nanjing">
+                            <div class="item__cover">
+                                <img src="https://s2.ax1x.com/2019/01/19/kCEuX8.jpg" alt="Nanjing" />
+                            </div>
+                            <div class="item__info">
+                                <h3 class="item__title">Nanjing</h3>
+                                <span class="item__text">2019-01-18</span>
+                            </div>
+                        </a>
+                    </li>
+                
+        </ul>
+    
+    </div>
+
+    <div class="sidebar__block">
+        <h3 class="block__title">文章标签</h3>
+        
+        <ul class="block-list tag-list clearfix">
+            
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Eclipse/">Eclipse</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Google-PageRank/">Google,PageRank</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Great-Firewall/">Great Firewall</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Hadoop/">Hadoop</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Hadoop部署/">Hadoop部署</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Hbase/">Hbase</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Learning/">Learning</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Life/">Life</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Map-Reduce/">Map-Reduce</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/TCP-Socket通信/">TCP,Socket通信</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/git/">git</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/hadoop/">hadoop</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/hobbies/">hobbies</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/java/">java</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/linux/">linux</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/love/">love</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/memory/">memory</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/noSQL/">noSQL</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/paging/">paging</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/shadowsocks/">shadowsocks</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/travel/">travel</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/分支定界/">分支定界</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/列式数据库/">列式数据库</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/动态规划/">动态规划</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/版本管理/">版本管理</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/装饰器模式/">装饰器模式</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/计算机网络/">计算机网络</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/读取数据/">读取数据</a>
+                    </li>  
+                
+        </ul>
+    
+    </div>
+
+    <!-- <div class="sidebar__block">
+        <h3 class="block__title">友情链接</h3>
+        <ul class="block-list">
+            
+        </ul>
+    </div> -->
+</aside>
+</main>
+
+
+        
+            <!-- 页脚 -->
+<footer class="page__footer">
+    <section class="footer__top">
+        <div class="page__container footer__container">
+            
+            <div class="footer-top__item footer-top__item--2">
+                <h3 class="item__title">关于</h3>
+                <div class="item__content">
+                    <p class="item__text">本站是基于 Hexo 搭建的静态资源博客，主要用于分享日常学习、生活及工作的一些心得总结，欢迎点击右下角订阅 rss。</p>
+                    <ul class="footer__contact-info">
+                        <li class="contact-info__item">
+                            <i class="iconfont icon-address"></i>
+                            <span>Dalian, Lianning Province, China</span>
+                        </li>
+                        <li class="contact-info__item">
+                            <i class="iconfont icon-email2"></i>
+                            <span>dlut.weixiang@gmail.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            
+            
+                <div class="footer-top__item footer__image">
+                    <img src="https://s1.ax1x.com/2018/08/08/PsWmg1.jpg" alt="logo" title="Space-X">
+                </div>
+            
+            
+            
+            
+                
+                    <div class="footer-top__item">
+                        <h3 class="item__title">友情链接</h3>
+                        <div class="item__content">
+                            <ul class="footer-top__list">
+                                
+                                    <li class="list-item">
+                                        <a href="https://github.com/Mrminfive/hexo-theme-skapp" title="hexo-theme-skapp" target="_blank">hexo-theme-skapp</a>
+                                    </li>
+                                
+                            </ul>
+                        </div>
+                    </div>
+                
+                    <div class="footer-top__item">
+                        <h3 class="item__title">构建工具</h3>
+                        <div class="item__content">
+                            <ul class="footer-top__list">
+                                
+                                    <li class="list-item">
+                                        <a href="https://hexo.io/" title="Blog Framework" target="_blank">Hexo</a>
+                                    </li>
+                                
+                            </ul>
+                        </div>
+                    </div>
+                
+            
+        </div>
+    </section>
+    <section class="footer__bottom">
+        <div class="page__container footer__container">
+            <p class="footer__copyright">©
+                <a href="https://github.com/Mrminfive/hexo-theme-skapp" target="_blank">Skapp</a> 2017 powered by
+                <a href="http://hexo.io/" target="_blank">Hexo</a>, made by 
+                <a href="https://github.com/Mrminfive" target="_blank">minfive</a>.
+            </p>
+            <ul class="footer__social-network clearfix">
+                
+                
+                    <li class="social-network__item">
+                        <a href="https://github.com/spaces-x" target="_blank" title="github">
+                            <i class="iconfont icon-github"></i>
+                        </a>
+                    </li>
+                
+                    <li class="social-network__item">
+                        <a href="mailto:dlut.weixiang@gmail.com" target="_blank" title="email">
+                            <i class="iconfont icon-email"></i>
+                        </a>
+                    </li>
+                
+                    <li class="social-network__item">
+                        <a href="/atom.xml" target="_blank" title="rss">
+                            <i class="iconfont icon-rss"></i>
+                        </a>
+                    </li>
+                
+                
+            </ul>
+        </div>
+    </section>
+</footer>
+        
+
+        
+            <!-- 返回顶部 -->
+<div id="back-top" class="back-top back-top--hidden js-hidden">
+    <i class="iconfont icon-top"></i>
+</div>
+        
+    </div>
+
+    <!-- build:js /js/common.js -->
+        <script type="text/javascript" src="js/common/utils.js"></script>
+        <script type="text/javascript" src="js/common/pack.js"></script>
+        <script type="text/javascript" src="js/common/animation.js"></script>
+        <script type="text/javascript" src="js/layout/loading.js"></script>
+        <script type="text/javascript" src="js/layout/header.js"></script>
+        <script type="text/javascript" src="js/layout/back-top.js"></script>
+        <script type="text/javascript" src="js/layout/post.js"></script>
+    <!-- endbuild -->
+
+    
+    <script src="/js/page/post.js"></script>
+
+
+    
+    
+
+
+
+    <!-- 不蒜子统计 -->
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+
+     
+
+
+
+
+
+
+
+
+</body>
+</html>

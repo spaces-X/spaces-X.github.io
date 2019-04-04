@@ -1,1 +1,590 @@
-<!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><title>Algorithm1 | X-Blog</title><meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="format-detection" content="telephone=no"><meta name="author" content="[object Object]"><meta name="designer" content="minfive"><meta name="keywords" content="Xiang blog, 程序员, SCI论文, Python, Hadoop, 深度炼丹"><meta name="description" content="日常学习与兴趣交流的个人博客"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=yes"><meta name="mobile-web-app-capable" content="yes"><meta name="robots" content="all"><link rel="canonical" href="https://spaces-x.github.io/2019/01/18/alogorithm/index.html"><link rel="icon" type="image/png" href="https://www.easyicon.net/api/resizeApi.php?id=546977&size=32" sizes="32x32"><link rel="stylesheet" href="/scss/base/index.css"><link rel="alternate" href="/atom.xml" title="Space-X"><link rel="stylesheet" href="/scss/views/page/post.css"></head><body ontouchstart><div id="page-loading" class="page page-loading" style="background-image:url(http://oo12ugek5.bkt.clouddn.com/blog/images/loader.gif)"></div><div id="page" class="page js-hidden"><header class="page__small-header page__header--small"><nav class="page__navbar"><div class="page__container navbar-container"><a class="page__logo" href="/" title="Space-X" alt="Space-X"><img src="https://s1.ax1x.com/2018/07/15/PMfvfP.png" alt="Space-X"></a><nav class="page__nav"><ul class="nav__list clearfix"><li class="nav__item"><a href="/" alt="首页" title="首页">首页</a></li><li class="nav__item"><a href="/archives" alt="归档" title="归档">归档</a></li><li class="nav__item"><a href="/about" alt="关于" title="关于">关于</a></li></ul></nav><button class="page__menu-btn" type="button"><i class="iconfont icon-menu"></i></button></div></nav></header><main class="page__container page__main"><div class="page__content"><article class="page__post"><div class="post__cover"><img src="https://s2.ax1x.com/2019/01/18/k9gwCD.jpg" alt="Algorithm1"></div><header class="post__info"><h1 class="post__title">Algorithm1</h1><div class="post__mark"><div class="mark__block"><i class="mark__icon iconfont icon-write"></i><ul class="mark__list clearfix"><li class="mark__item"><a href="https://www.github.com/spaces-x">WeiXiang</a></li></ul></div><div class="mark__block"><i class="mark__icon iconfont icon-time"></i><ul class="mark__list clearfix"><li class="mark__item"><span>2019-01-18</span></li></ul></div><div class="mark__block"><i class="mark__icon iconfont icon-tab"></i><ul class="mark__list clearfix"><li class="mark__item"><a href="/tags/分支定界/">分支定界</a></li><li class="mark__item"><a href="/tags/动态规划/">动态规划</a></li></ul></div></div></header><div class="post__content"><script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script><h1 id="动态规划"><a href="#动态规划" class="headerlink" title="动态规划"></a>动态规划</h1><h2 id="第一小题"><a href="#第一小题" class="headerlink" title="第一小题"></a>第一小题</h2><h3 id="题目："><a href="#题目：" class="headerlink" title="题目："></a>题目：</h3><p>某工厂调查了解市场情况，估计在今后四个月内，市场对其产品的需求量如下表所示。</p><table><thead><tr><th style="text-align:center">时期（月）</th><th style="text-align:center">需要量（产品单位）</th></tr></thead><tbody><tr><td style="text-align:center">1</td><td style="text-align:center">2</td></tr><tr><td style="text-align:center">2</td><td style="text-align:center">3</td></tr><tr><td style="text-align:center">3</td><td style="text-align:center">2</td></tr><tr><td style="text-align:center">4</td><td style="text-align:center">4</td></tr></tbody></table><p>已知：对每个月来讲，生产一批产品的固定成本费为 3 (千元)，若不生产，则为零。每<br>生产单位产品的成本费为 1 （千元)。同时，在任何一个月内，生产能力所允许的最大生产<br>批量为不超过 6 个单位。<br>又知每单位产品的库存费用为每月 0.5 （千元），同时要求在第一个月开始之初， 及<br>在第四个月末，均无产品库存。<br>问：在满足上述条件下，该厂应如何安排各个时期的生产与库存，使所花的总成本费用<br>最低？<br>要求：写出各种变量、状态转移方程、递推关系式、和详细计算步骤。</p><h3 id="解："><a href="#解：" class="headerlink" title="解："></a>解：</h3><p>如下图：</p><p><a href="https://imgchr.com/i/FN7KZ8" target="_blank" rel="noopener"><img src="https://s1.ax1x.com/2018/12/14/FN7KZ8.md.jpg" alt="FN7KZ8.md.jpg"></a></p><p><img src="https://s1.ax1x.com/2018/12/14/FN7QIg.jpg" alt="FN7QIg.jpg"></p><p><img src="https://s1.ax1x.com/2018/12/14/FNqzfe.jpg" alt="FNqzfe.jpg"></p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure><h2 id="第二小题"><a href="#第二小题" class="headerlink" title="第二小题"></a>第二小题</h2><h3 id="题目：-1"><a href="#题目：-1" class="headerlink" title="题目："></a>题目：</h3><p>某推销员要从城市 v1 出发，访问其它城市 v2，v3，…，v6 各一次且仅一次，</p><p>最后返回 v1。D为各城市间的距离矩阵。问：该推销员应如何选择路线，才能使总的行程最短？</p><p>节点v1,v2,…,v6之间的距离矩阵D如下</p><p>$$<br>D= \left[</p><p>\begin{matrix}<br>0 &amp; 10 &amp; 20 &amp; 30 &amp; 40 &amp; 50 \<br>12 &amp; 0 &amp; 18 &amp; 30 &amp; 25 &amp; 21 \<br>23 &amp; 19 &amp; 0 &amp; 5 &amp; 10 &amp; 15 \<br>34&amp; 32 &amp; 4 &amp; 0 &amp; 8 &amp; 16 \<br>45 &amp; 27 &amp; 11 &amp; 10 &amp; 0 &amp; 18 \<br>56 &amp; 22 &amp; 16 &amp; 20 &amp; 12 &amp; 0 \</p><p>\end{matrix}<br>\right] \tag{1}<br>$$</p><h3 id="解"><a href="#解" class="headerlink" title="解:"></a>解:</h3><p>令L(v,U) 表示从v出发遍历U中所有点一次仅一次后返回到原点v_1的最短路径长度，则有如下的递推公式<br>$$<br>L(v_i,U_i) =\min_{v_{i+1} \in U_i } { L(v_{i+1},U_i -{v_{i+1}}) +D[v_i] [v_{i+1}] } \tag{2}<br>$$<br>特别的<br>$$<br>L(v_i, \emptyset) = D[v_i][0] \tag{3}<br>$$<br>令函数<br>$$<br>min_len( v_i,U_i )<br>$$<br>实现 L的功能</p><p>min_len ()函数输入起始城市和要遍历城市的集合，返回最小长度,下一跳节点组成的元组(最小长度,下一跳节点)流程图如下：</p><p><a href="https://imgchr.com/i/FNaoB8" target="_blank" rel="noopener"><img src="https://s1.ax1x.com/2018/12/13/FNaoB8.png" alt="FNaoB8.png"></a><br>主函数用于输出整个过程的路径和最小长度，流程如下：</p><p>答案输出：</p><p>最小路径长度： 80<br>路径为: V1 -&gt;V2 -&gt;V6 -&gt;V5 -&gt;V4 -&gt;V3 -&gt;V1</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># encoding: utf-8</span></span><br><span class="line"><span class="comment"># 姓名：魏翔</span></span><br><span class="line"><span class="comment"># 学号：ZY1806220</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">dislist = [</span><br><span class="line">    [<span class="number">0</span>,<span class="number">10</span>,<span class="number">20</span>,<span class="number">30</span>,<span class="number">40</span>,<span class="number">50</span>],</span><br><span class="line">    [<span class="number">12</span>,<span class="number">0</span>,<span class="number">18</span>,<span class="number">30</span>,<span class="number">25</span>,<span class="number">21</span>],</span><br><span class="line">    [<span class="number">23</span>,<span class="number">19</span>,<span class="number">0</span>,<span class="number">5</span>,<span class="number">10</span>,<span class="number">15</span>],</span><br><span class="line">    [<span class="number">34</span>,<span class="number">32</span>,<span class="number">4</span>,<span class="number">0</span>,<span class="number">8</span>,<span class="number">16</span>],</span><br><span class="line">    [<span class="number">45</span>,<span class="number">27</span>,<span class="number">11</span>,<span class="number">10</span>,<span class="number">0</span>,<span class="number">18</span>],</span><br><span class="line">    [<span class="number">56</span>,<span class="number">22</span>,<span class="number">16</span>,<span class="number">20</span>,<span class="number">12</span>,<span class="number">0</span>]</span><br><span class="line">]</span><br><span class="line">U = set([<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 函数输入参数为：</span></span><br><span class="line"><span class="comment"># 起点v_i和待访问集合 u_i</span></span><br><span class="line"><span class="comment"># 函数返回：</span></span><br><span class="line"><span class="comment"># 以v_i为起点遍历u_i后返回原点v_1的最小路径长度 以及 下一跳节点编号</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">min_len</span><span class="params">(v_i,u_i)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> len(u_i)==<span class="number">0</span>:              <span class="comment">#  如果u_i集合为空则返回 （从v_i到v_0的长度，下一跳节点：0）</span></span><br><span class="line">        <span class="keyword">return</span> dislist[v_i][<span class="number">0</span>],<span class="number">0</span> </span><br><span class="line">    results = []</span><br><span class="line">    <span class="keyword">for</span> item <span class="keyword">in</span> u_i:             <span class="comment">#  遍历所有未访问过得节点，将他们作为下一跳</span></span><br><span class="line">        temp = (min_len(item,u_i-&#123;item&#125;)[<span class="number">0</span>]+dislist[v_i][item],item) <span class="comment"># 递推公式</span></span><br><span class="line">        results.append(temp)</span><br><span class="line">    result = min(results)        <span class="comment"># 找到最小的路径长度和下一跳节点</span></span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    U=U-&#123;<span class="number">0</span>&#125;</span><br><span class="line">    <span class="keyword">print</span> (<span class="string">"最小路径长度："</span>,min_len(<span class="number">0</span>,U)[<span class="number">0</span>])  <span class="comment"># 最短路径长度</span></span><br><span class="line">    print(<span class="string">"路径为:\n\nV1 -&gt; "</span>)</span><br><span class="line">    index=<span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span> len(U)!=<span class="number">0</span>:                        <span class="comment"># 循环打印路径索引（下一跳节点）</span></span><br><span class="line">        result,index = min_len(index,U)</span><br><span class="line">        print(<span class="string">'V'</span> + str(index+<span class="number">1</span>)+<span class="string">' -&gt; '</span>)    <span class="comment"># 路径索引加1 因为list索引下标是从0开始 而题目中的下标从1开始</span></span><br><span class="line">        U.remove(index)</span><br><span class="line"></span><br><span class="line">    print(<span class="string">'V1'</span>)                             <span class="comment"># 最后返回到v1节点</span></span><br></pre></td></tr></table></figure><h1 id="分支定界"><a href="#分支定界" class="headerlink" title="分支定界"></a>分支定界</h1><h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p><img src="https://s2.ax1x.com/2019/01/18/k9sKln.png" alt="k9sKln.png"></p><h3 id="直接上代码"><a href="#直接上代码" class="headerlink" title="直接上代码"></a>直接上代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">//ZY1806220 魏翔</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * @Description: Assignment 2</span></span><br><span class="line"><span class="comment"> * @Author: ZY1806220_魏翔</span></span><br><span class="line"><span class="comment"> * @Date: 2019-01-08 10:34:46</span></span><br><span class="line"><span class="comment"> * @LastEditTime: 2019-01-08 15:32:16</span></span><br><span class="line"><span class="comment"> * @LastEditors: Please set LastEditors</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;fstream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> max_vexNum 50</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAX_INT 0x7FFFFFFF</span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span>&#123;</span></span><br><span class="line">    <span class="keyword">bool</span> is_visited[max_vexNum];                <span class="comment">//标记节点在当前深度(deep)下是否被访问过 </span></span><br><span class="line">    <span class="keyword">int</span> dist[max_vexNum][max_vexNum];           <span class="comment">//记录距离的邻接矩阵</span></span><br><span class="line">    <span class="keyword">int</span> cost[max_vexNum][max_vexNum];           <span class="comment">//记录花费的邻接矩阵</span></span><br><span class="line">    <span class="keyword">int</span> path[max_vexNum];                       <span class="comment">//记录全局最小距离对应的访问路径</span></span><br><span class="line">    <span class="keyword">int</span> sumCost;                                <span class="comment">//记录全局最小距离对应的cost总和</span></span><br><span class="line">    <span class="keyword">int</span> min_sumDist;                            <span class="comment">//记录全局最小距离</span></span><br><span class="line">&#125;Graph;</span><br><span class="line"><span class="keyword">int</span> path[max_vexNum] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @description: 深度优先遍历图，并按条件进行剪枝，最终找到满足条件的最短路径，并更新全局最小距离，保存路径轨迹</span></span><br><span class="line"><span class="comment"> * @param &#123;Graph &amp;G:待遍历的图的引用, int start_vex：当前起始节点, int dist：从0到当前节点已用距离, int cost：从0到当前节点已用花费, int deep：当前深度&#125;   </span></span><br><span class="line"><span class="comment"> * @return: void</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">DFS</span><span class="params">(Graph &amp;G,<span class="keyword">int</span> start_vex,<span class="keyword">int</span> dist,<span class="keyword">int</span> cost,<span class="keyword">int</span> deep)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    G.is_visited[start_vex]=<span class="literal">true</span>;   <span class="comment">//当前节点访问过标志为真</span></span><br><span class="line">    path[deep] = start_vex+<span class="number">1</span>;       <span class="comment">//当前路径当前深度下节点编号</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (start_vex==max_vexNum<span class="number">-1</span>) &#123;            <span class="comment">//找到满足条件的更短路径，更新全局最短路径</span></span><br><span class="line">        <span class="comment">/* code */</span></span><br><span class="line">        G.min_sumDist = dist;</span><br><span class="line">        G.sumCost = cost;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;max_vexNum;i++)</span><br><span class="line">        &#123;</span><br><span class="line">            G.path[i]=<span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;=deep;i++)</span><br><span class="line">        &#123;</span><br><span class="line">            G.path[i] = path[i];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; max_vexNum; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">/* code */</span></span><br><span class="line">        <span class="keyword">if</span>((G.dist[start_vex][i]&gt;<span class="number">0</span>) &amp;&amp; (G.dist[start_vex][i]&lt;<span class="number">9999</span>) &amp;&amp; (G.is_visited[i]==<span class="literal">false</span>))</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">int</span> new_dist = dist+G.dist[start_vex][i];</span><br><span class="line">            <span class="keyword">int</span> new_cost = cost+G.cost[start_vex][i];</span><br><span class="line">            <span class="keyword">if</span>( (new_cost&gt;<span class="number">1500</span>) || (new_dist&gt;G.min_sumDist))&#123;       <span class="comment">//满足剪枝条件</span></span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">                <span class="comment">//这个剪枝的界还是不够紧凑</span></span><br><span class="line">                <span class="comment">//可以先通过Floyd求出每个节点到B的最短路径（路径下届）</span></span><br><span class="line">                <span class="comment">//求出每个节点到B的最小cost（花费下届）</span></span><br><span class="line">                <span class="comment">//如果 当前已有cost+从当前节点到B的最小cost&gt;1500 || </span></span><br><span class="line">                <span class="comment">//     当前已有路径长度+当前到B最短路径长&gt;G.min_sumDist </span></span><br><span class="line">                <span class="comment">//则剪枝</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">                DFS(G,i,new_dist,new_cost,deep+<span class="number">1</span>);</span><br><span class="line">                G.is_visited[i]=<span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @description: 初始化图 </span></span><br><span class="line"><span class="comment"> * @param ：</span></span><br><span class="line"><span class="comment"> * Graph的引用 Graph &amp;</span></span><br><span class="line"><span class="comment"> * @return: void</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">initial_Graph</span><span class="params">(Graph &amp;G)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ifstream in_dist;</span><br><span class="line">    ifstream in_cost;</span><br><span class="line">    in_dist.open(<span class="string">"m1.txt"</span>);</span><br><span class="line">    <span class="keyword">if</span>(!in_dist.is_open())&#123;</span><br><span class="line">        <span class="built_in">cout</span>&lt;&lt;<span class="string">"Open file m1.txt failure"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    in_cost.open(<span class="string">"m2.txt"</span>);</span><br><span class="line">    <span class="keyword">if</span>(!in_cost.is_open())&#123;</span><br><span class="line">        <span class="built_in">cout</span>&lt;&lt;<span class="string">"Open file m2.txt failure"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;max_vexNum; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        G.is_visited[i]=<span class="literal">false</span>;</span><br><span class="line">        G.path[i]=<span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    G.sumCost = <span class="number">0</span>;</span><br><span class="line">    G.min_sumDist = MAX_INT;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; max_vexNum; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">/* code */</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> j =<span class="number">0</span>; j&lt;max_vexNum; j++)</span><br><span class="line">        &#123;</span><br><span class="line">            in_dist &gt;&gt; G.dist[i][j];</span><br><span class="line">            in_cost &gt;&gt; G.cost[i][j];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @description: 打印图G中的最小距离和其花费，以及最小距离对应的一个路径</span></span><br><span class="line"><span class="comment"> * @param &#123;Graph &amp;&#125; </span></span><br><span class="line"><span class="comment"> * @return: void</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">printGraph</span><span class="params">(Graph &amp;G)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"最小距离为:%d;\t其花费为:%d\n"</span>, G.min_sumDist, G.sumCost);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; G.path[i] != <span class="number">0</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (i == <span class="number">0</span>) <span class="built_in">printf</span>(<span class="string">"路径:%d"</span>, G.path[i]);</span><br><span class="line">        <span class="keyword">else</span> <span class="built_in">printf</span>(<span class="string">"-&gt;%d"</span>, G.path[i]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> <span class="keyword">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Graph G;</span><br><span class="line">    initial_Graph(G);</span><br><span class="line">    DFS(G,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line">    printGraph(G);</span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    system(<span class="string">"pause"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><div class="post-announce">感谢您的阅读，本文由 <a href="https://spaces-x.github.io">Space-X</a> 版权所有。如若转载，请注明出处：Space-X（<a href="https://spaces-x.github.io/2019/01/18/alogorithm/">https://spaces-x.github.io/2019/01/18/alogorithm/</a>）</div><div class="post__prevs"><div class="post__prev"><a href="/2019/01/18/nanjing/" title="Nanjing"><i class="iconfont icon-prev"></i>Nanjing</a></div><div class="post__prev post__prev--right"><a href="/2019/03/31/DecoratorMode/" title="DecoratorMode">DecoratorMode<i class="iconfont icon-next"></i></a></div></div></div></article></div><aside class="page__sidebar"><form id="page-search-from" class="page__search-from" action="/search/"><label class="search-form__item"><input class="input" type="text" name="search" placeholder="Search..."> <i class="iconfont icon-search"></i></label></form><div class="sidebar__block"><h3 class="block__title">简介</h3><p class="block__text">日常学习与兴趣交流的个人博客</p></div><div class="sidebar__block"><h3 class="block__title">文章分类</h3><ul class="block-list"><li class="block-list-item"><a class="block-list-link" href="/categories/计算机网络/">计算机网络</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/算法/">算法</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/游玩/">游玩</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/welcome/">welcome</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/java设计模式/">java设计模式</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/hadoop/">hadoop</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/OS/">OS</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/Hbase/">Hbase</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/Hadoop/">Hadoop</a><span class="block-list-count">2</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/Git-版本管理/">Git 版本管理</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/GFW/">GFW</a><span class="block-list-count">1</span></li></ul></div><div class="sidebar__block"><h3 class="block__title">最新文章</h3><ul class="block-list latest-post-list"><li class="latest-post-item"><a href="/2019/04/04/memorypaging/" title="Memory Paging"><div class="item__cover"><img src="https://s2.ax1x.com/2019/04/04/A2ifUO.md.jpg" alt="Memory Paging"></div><div class="item__info"><h3 class="item__title">Memory Paging</h3><span class="item__text">2019-04-04</span></div></a></li><li class="latest-post-item"><a href="/2019/03/31/DecoratorMode/" title="DecoratorMode"><div class="item__cover"><img src="https://s2.ax1x.com/2019/03/31/ArQrQJ.md.jpg" alt="DecoratorMode"></div><div class="item__info"><h3 class="item__title">DecoratorMode</h3><span class="item__text">2019-03-31</span></div></a></li><li class="latest-post-item"><a href="/2019/01/18/alogorithm/" title="Algorithm1"><div class="item__cover"><img src="https://s2.ax1x.com/2019/01/18/k9gwCD.jpg" alt="Algorithm1"></div><div class="item__info"><h3 class="item__title">Algorithm1</h3><span class="item__text">2019-01-18</span></div></a></li><li class="latest-post-item"><a href="/2019/01/18/nanjing/" title="Nanjing"><div class="item__cover"><img src="https://s2.ax1x.com/2019/01/19/kCEuX8.jpg" alt="Nanjing"></div><div class="item__info"><h3 class="item__title">Nanjing</h3><span class="item__text">2019-01-18</span></div></a></li></ul></div><div class="sidebar__block"><h3 class="block__title">文章标签</h3><ul class="block-list tag-list clearfix"><li class="tag-item"><a class="tag-link" href="/tags/Eclipse/">Eclipse</a></li><li class="tag-item"><a class="tag-link" href="/tags/Google-PageRank/">Google,PageRank</a></li><li class="tag-item"><a class="tag-link" href="/tags/Great-Firewall/">Great Firewall</a></li><li class="tag-item"><a class="tag-link" href="/tags/Hadoop/">Hadoop</a></li><li class="tag-item"><a class="tag-link" href="/tags/Hadoop部署/">Hadoop部署</a></li><li class="tag-item"><a class="tag-link" href="/tags/Hbase/">Hbase</a></li><li class="tag-item"><a class="tag-link" href="/tags/Learning/">Learning</a></li><li class="tag-item"><a class="tag-link" href="/tags/Life/">Life</a></li><li class="tag-item"><a class="tag-link" href="/tags/Map-Reduce/">Map-Reduce</a></li><li class="tag-item"><a class="tag-link" href="/tags/TCP-Socket通信/">TCP,Socket通信</a></li><li class="tag-item"><a class="tag-link" href="/tags/git/">git</a></li><li class="tag-item"><a class="tag-link" href="/tags/hadoop/">hadoop</a></li><li class="tag-item"><a class="tag-link" href="/tags/hobbies/">hobbies</a></li><li class="tag-item"><a class="tag-link" href="/tags/java/">java</a></li><li class="tag-item"><a class="tag-link" href="/tags/linux/">linux</a></li><li class="tag-item"><a class="tag-link" href="/tags/love/">love</a></li><li class="tag-item"><a class="tag-link" href="/tags/memory/">memory</a></li><li class="tag-item"><a class="tag-link" href="/tags/noSQL/">noSQL</a></li><li class="tag-item"><a class="tag-link" href="/tags/paging/">paging</a></li><li class="tag-item"><a class="tag-link" href="/tags/shadowsocks/">shadowsocks</a></li><li class="tag-item"><a class="tag-link" href="/tags/travel/">travel</a></li><li class="tag-item"><a class="tag-link" href="/tags/分支定界/">分支定界</a></li><li class="tag-item"><a class="tag-link" href="/tags/列式数据库/">列式数据库</a></li><li class="tag-item"><a class="tag-link" href="/tags/动态规划/">动态规划</a></li><li class="tag-item"><a class="tag-link" href="/tags/版本管理/">版本管理</a></li><li class="tag-item"><a class="tag-link" href="/tags/装饰器模式/">装饰器模式</a></li><li class="tag-item"><a class="tag-link" href="/tags/计算机网络/">计算机网络</a></li><li class="tag-item"><a class="tag-link" href="/tags/读取数据/">读取数据</a></li></ul></div></aside></main><footer class="page__footer"><section class="footer__top"><div class="page__container footer__container"><div class="footer-top__item footer-top__item--2"><h3 class="item__title">关于</h3><div class="item__content"><p class="item__text">本站是基于 Hexo 搭建的静态资源博客，主要用于分享日常学习、生活及工作的一些心得总结，欢迎点击右下角订阅 rss。</p><ul class="footer__contact-info"><li class="contact-info__item"><i class="iconfont icon-address"></i> <span>Dalian, Lianning Province, China</span></li><li class="contact-info__item"><i class="iconfont icon-email2"></i> <span>dlut.weixiang@gmail.com</span></li></ul></div></div><div class="footer-top__item footer__image"><img src="https://s1.ax1x.com/2018/08/08/PsWmg1.jpg" alt="logo" title="Space-X"></div><div class="footer-top__item"><h3 class="item__title">友情链接</h3><div class="item__content"><ul class="footer-top__list"><li class="list-item"><a href="https://github.com/Mrminfive/hexo-theme-skapp" title="hexo-theme-skapp" target="_blank">hexo-theme-skapp</a></li></ul></div></div><div class="footer-top__item"><h3 class="item__title">构建工具</h3><div class="item__content"><ul class="footer-top__list"><li class="list-item"><a href="https://hexo.io/" title="Blog Framework" target="_blank">Hexo</a></li></ul></div></div></div></section><section class="footer__bottom"><div class="page__container footer__container"><p class="footer__copyright">© <a href="https://github.com/Mrminfive/hexo-theme-skapp" target="_blank">Skapp</a> 2017 powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, made by <a href="https://github.com/Mrminfive" target="_blank">minfive</a>.</p><ul class="footer__social-network clearfix"><li class="social-network__item"><a href="https://github.com/spaces-x" target="_blank" title="github"><i class="iconfont icon-github"></i></a></li><li class="social-network__item"><a href="mailto:dlut.weixiang@gmail.com" target="_blank" title="email"><i class="iconfont icon-email"></i></a></li><li class="social-network__item"><a href="/atom.xml" target="_blank" title="rss"><i class="iconfont icon-rss"></i></a></li></ul></div></section></footer><div id="back-top" class="back-top back-top--hidden js-hidden"><i class="iconfont icon-top"></i></div></div><script src="/js/common.js"></script><script src="/js/page/post.js"></script><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    
+        <title>Algorithm1 | X-Blog</title>
+    
+
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<meta name="format-detection" content="telephone=no">
+<meta name="author" content="[object Object]" />
+<meta name="designer" content="minfive" />
+<meta name="keywords" content="Xiang blog, 程序员, SCI论文, Python, Hadoop, 深度炼丹"/>
+<meta name="description" content="日常学习与兴趣交流的个人博客" />
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="robots" content="all" />
+
+<link rel="canonical" href="https://spaces-x.github.io/2019/01/18/alogorithm/index.html">
+
+<link rel="icon" type="image/png" href="https://www.easyicon.net/api/resizeApi.php?id=546977&size=32" sizes="32x32">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Prefetch -->
+
+
+
+
+
+
+<!-- CSS -->
+<link rel="stylesheet" href="/scss/base/index.css">
+
+<!-- RSS -->
+<link rel="alternate" href="/atom.xml" title="Space-X">
+
+<!-- 统计 -->
+<!-- 百度统计 -->
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    
+    
+    <link rel="stylesheet" href="/scss/views/page/post.css">
+
+</head>
+<body ontouchstart>
+    
+        <!-- loading 页面 -->
+<div id="page-loading" class="page page-loading" style="background-image: url('http://oo12ugek5.bkt.clouddn.com/blog/images/loader.gif')"></div>
+    
+
+    <div id="page" class="page js-hidden">
+        
+    <!-- 页头 -->
+<header class="page__small-header page__header--small">
+    <nav class="page__navbar">
+        <div class="page__container navbar-container">
+            <a class="page__logo" href="/" title="Space-X" alt="Space-X">
+                <img src="https://s1.ax1x.com/2018/07/15/PMfvfP.png" alt="Space-X">
+            </a>
+
+            <nav class="page__nav">
+                <ul class="nav__list clearfix">
+                    
+                        
+                        <li class="nav__item">
+                            <a href="/" alt="首页" title="首页">首页</a>
+                        </li>
+                    
+                        
+                        <li class="nav__item">
+                            <a href="/archives" alt="归档" title="归档">归档</a>
+                        </li>
+                    
+                        
+                        <li class="nav__item">
+                            <a href="/about" alt="关于" title="关于">关于</a>
+                        </li>
+                    
+                </ul>
+            </nav>
+
+            <button class="page__menu-btn" type="button">
+                <i class="iconfont icon-menu"></i>
+            </button>
+        </div>
+    </nav>
+</header>
+
+
+        
+    <main class="page__container page__main">
+    <div class="page__content">
+        <article class="page__post">
+    <div class="post__cover">
+        <img src="https://s2.ax1x.com/2019/01/18/k9gwCD.jpg" alt="Algorithm1">
+    </div>
+
+    <header class="post__info">
+        <h1 class="post__title">Algorithm1</h1>
+
+        <div class="post__mark">
+            <div class="mark__block">
+                <i class="mark__icon iconfont icon-write"></i>
+                <ul class="mark__list clearfix">
+                    <li class="mark__item">
+                        <a href="https://www.github.com/spaces-x">WeiXiang</a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="mark__block">
+                <i class="mark__icon iconfont icon-time"></i>
+                <ul class="mark__list clearfix">
+                    <li class="mark__item"><span>2019-01-18</span></li>
+                </ul>
+            </div>
+
+            <div class="mark__block">
+                <i class="mark__icon iconfont icon-tab"></i>
+                <ul class="mark__list clearfix">
+                    
+                        <li class="mark__item">
+                            <a href="/tags/分支定界/">分支定界</a>
+                        </li>
+                    
+                        <li class="mark__item">
+                            <a href="/tags/动态规划/">动态规划</a>
+                        </li>
+                    
+                </ul>
+            </div>
+
+            
+        </div>
+    </header>
+
+    <div class="post__content">
+        <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
+
+<h1 id="动态规划"><a href="#动态规划" class="headerlink" title="动态规划"></a>动态规划</h1><h2 id="第一小题"><a href="#第一小题" class="headerlink" title="第一小题"></a>第一小题</h2><h3 id="题目："><a href="#题目：" class="headerlink" title="题目："></a>题目：</h3><p>某工厂调查了解市场情况，估计在今后四个月内，市场对其产品的需求量如下表所示。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">时期（月）</th>
+<th style="text-align:center">需要量（产品单位）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">2</td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:center">3</td>
+</tr>
+<tr>
+<td style="text-align:center">3</td>
+<td style="text-align:center">2</td>
+</tr>
+<tr>
+<td style="text-align:center">4</td>
+<td style="text-align:center">4</td>
+</tr>
+</tbody>
+</table>
+<p>已知：对每个月来讲，生产一批产品的固定成本费为 3 (千元)，若不生产，则为零。每<br>生产单位产品的成本费为 1 （千元)。同时，在任何一个月内，生产能力所允许的最大生产<br>批量为不超过 6 个单位。<br> 又知每单位产品的库存费用为每月 0.5 （千元），同时要求在第一个月开始之初， 及<br>在第四个月末，均无产品库存。<br> 问：在满足上述条件下，该厂应如何安排各个时期的生产与库存，使所花的总成本费用<br>最低？<br>要求：写出各种变量、状态转移方程、递推关系式、和详细计算步骤。</p>
+<h3 id="解："><a href="#解：" class="headerlink" title="解："></a>解：</h3><p>如下图：</p>
+<p><a href="https://imgchr.com/i/FN7KZ8" target="_blank" rel="noopener"><img src="https://s1.ax1x.com/2018/12/14/FN7KZ8.md.jpg" alt="FN7KZ8.md.jpg"></a></p>
+<p><img src="https://s1.ax1x.com/2018/12/14/FN7QIg.jpg" alt="FN7QIg.jpg"></p>
+<p><img src="https://s1.ax1x.com/2018/12/14/FNqzfe.jpg" alt="FNqzfe.jpg"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="第二小题"><a href="#第二小题" class="headerlink" title="第二小题"></a>第二小题</h2><h3 id="题目：-1"><a href="#题目：-1" class="headerlink" title="题目："></a>题目：</h3><p>某推销员要从城市 v1 出发，访问其它城市 v2，v3，…，v6 各一次且仅一次，</p>
+<p>最后返回 v1。D为各城市间的距离矩阵。问：该推销员应如何选择路线，才能使总的行程最短？</p>
+<p>节点v1,v2,…,v6之间的距离矩阵D如下</p>
+<p>$$<br>D= \left[</p>
+<p> \begin{matrix}<br>   0 &amp; 10 &amp; 20 &amp; 30 &amp; 40 &amp; 50  \<br>   12 &amp; 0 &amp; 18 &amp; 30 &amp; 25 &amp; 21  \<br>  23 &amp; 19 &amp; 0 &amp; 5 &amp; 10 &amp; 15  \<br>   34&amp; 32 &amp; 4 &amp; 0 &amp; 8 &amp; 16  \<br>   45 &amp; 27 &amp; 11 &amp; 10 &amp; 0 &amp; 18  \<br>   56 &amp; 22 &amp; 16 &amp; 20 &amp; 12 &amp; 0  \</p>
+<p>  \end{matrix}<br>  \right] \tag{1}<br>$$</p>
+<h3 id="解"><a href="#解" class="headerlink" title="解:"></a>解:</h3><p>令L(v,U)  表示从v出发遍历U中所有点一次仅一次后返回到原点v_1的最短路径长度，则有如下的递推公式<br>$$<br>L(v_i,U_i) =\min_{v_{i+1} \in U_i } {     L(v_{i+1},U_i -{v_{i+1}})   +D[v_i]  [v_{i+1}]    } \tag{2}<br>$$<br>特别的<br>$$<br>L(v_i, \emptyset) = D[v_i][0] \tag{3}<br>$$<br>令函数<br>$$<br>min_len( v_i,U_i )<br>$$<br> 实现 L的功能</p>
+<p>min_len ()函数输入起始城市和要遍历城市的集合，返回最小长度,下一跳节点组成的元组(最小长度,下一跳节点)流程图如下：</p>
+<p><a href="https://imgchr.com/i/FNaoB8" target="_blank" rel="noopener"><img src="https://s1.ax1x.com/2018/12/13/FNaoB8.png" alt="FNaoB8.png"></a><br>主函数用于输出整个过程的路径和最小长度，流程如下：</p>
+<p>答案输出：</p>
+<p>最小路径长度： 80<br>路径为:  V1 -&gt;V2 -&gt;V6 -&gt;V5 -&gt;V4 -&gt;V3 -&gt;V1</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># encoding: utf-8</span></span><br><span class="line"><span class="comment"># 姓名：魏翔</span></span><br><span class="line"><span class="comment"># 学号：ZY1806220</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">dislist = [</span><br><span class="line">    [<span class="number">0</span>,<span class="number">10</span>,<span class="number">20</span>,<span class="number">30</span>,<span class="number">40</span>,<span class="number">50</span>],</span><br><span class="line">    [<span class="number">12</span>,<span class="number">0</span>,<span class="number">18</span>,<span class="number">30</span>,<span class="number">25</span>,<span class="number">21</span>],</span><br><span class="line">    [<span class="number">23</span>,<span class="number">19</span>,<span class="number">0</span>,<span class="number">5</span>,<span class="number">10</span>,<span class="number">15</span>],</span><br><span class="line">    [<span class="number">34</span>,<span class="number">32</span>,<span class="number">4</span>,<span class="number">0</span>,<span class="number">8</span>,<span class="number">16</span>],</span><br><span class="line">    [<span class="number">45</span>,<span class="number">27</span>,<span class="number">11</span>,<span class="number">10</span>,<span class="number">0</span>,<span class="number">18</span>],</span><br><span class="line">    [<span class="number">56</span>,<span class="number">22</span>,<span class="number">16</span>,<span class="number">20</span>,<span class="number">12</span>,<span class="number">0</span>]</span><br><span class="line">]</span><br><span class="line">U = set([<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 函数输入参数为：</span></span><br><span class="line"><span class="comment"># 起点v_i和待访问集合 u_i</span></span><br><span class="line"><span class="comment"># 函数返回：</span></span><br><span class="line"><span class="comment"># 以v_i为起点遍历u_i后返回原点v_1的最小路径长度 以及 下一跳节点编号</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">min_len</span><span class="params">(v_i,u_i)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> len(u_i)==<span class="number">0</span>:              <span class="comment">#  如果u_i集合为空则返回 （从v_i到v_0的长度，下一跳节点：0）</span></span><br><span class="line">        <span class="keyword">return</span> dislist[v_i][<span class="number">0</span>],<span class="number">0</span> </span><br><span class="line">    results = []</span><br><span class="line">    <span class="keyword">for</span> item <span class="keyword">in</span> u_i:             <span class="comment">#  遍历所有未访问过得节点，将他们作为下一跳</span></span><br><span class="line">        temp = (min_len(item,u_i-&#123;item&#125;)[<span class="number">0</span>]+dislist[v_i][item],item) <span class="comment"># 递推公式</span></span><br><span class="line">        results.append(temp)</span><br><span class="line">    result = min(results)        <span class="comment"># 找到最小的路径长度和下一跳节点</span></span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    U=U-&#123;<span class="number">0</span>&#125;</span><br><span class="line">    <span class="keyword">print</span> (<span class="string">"最小路径长度："</span>,min_len(<span class="number">0</span>,U)[<span class="number">0</span>])  <span class="comment"># 最短路径长度</span></span><br><span class="line">    print(<span class="string">"路径为:\n\nV1 -&gt; "</span>)</span><br><span class="line">    index=<span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span> len(U)!=<span class="number">0</span>:                        <span class="comment"># 循环打印路径索引（下一跳节点）</span></span><br><span class="line">        result,index = min_len(index,U)</span><br><span class="line">        print(<span class="string">'V'</span> + str(index+<span class="number">1</span>)+<span class="string">' -&gt; '</span>)    <span class="comment"># 路径索引加1 因为list索引下标是从0开始 而题目中的下标从1开始</span></span><br><span class="line">        U.remove(index)</span><br><span class="line"></span><br><span class="line">    print(<span class="string">'V1'</span>)                             <span class="comment"># 最后返回到v1节点</span></span><br></pre></td></tr></table></figure>
+<h1 id="分支定界"><a href="#分支定界" class="headerlink" title="分支定界"></a>分支定界</h1><h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p><img src="https://s2.ax1x.com/2019/01/18/k9sKln.png" alt="k9sKln.png"></p>
+<h3 id="直接上代码"><a href="#直接上代码" class="headerlink" title="直接上代码"></a>直接上代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">//ZY1806220 魏翔</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * @Description: Assignment 2</span></span><br><span class="line"><span class="comment"> * @Author: ZY1806220_魏翔</span></span><br><span class="line"><span class="comment"> * @Date: 2019-01-08 10:34:46</span></span><br><span class="line"><span class="comment"> * @LastEditTime: 2019-01-08 15:32:16</span></span><br><span class="line"><span class="comment"> * @LastEditors: Please set LastEditors</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;fstream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> max_vexNum 50</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAX_INT 0x7FFFFFFF</span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span>&#123;</span></span><br><span class="line">    <span class="keyword">bool</span> is_visited[max_vexNum];                <span class="comment">//标记节点在当前深度(deep)下是否被访问过 </span></span><br><span class="line">    <span class="keyword">int</span> dist[max_vexNum][max_vexNum];           <span class="comment">//记录距离的邻接矩阵</span></span><br><span class="line">    <span class="keyword">int</span> cost[max_vexNum][max_vexNum];           <span class="comment">//记录花费的邻接矩阵</span></span><br><span class="line">    <span class="keyword">int</span> path[max_vexNum];                       <span class="comment">//记录全局最小距离对应的访问路径</span></span><br><span class="line">    <span class="keyword">int</span> sumCost;                                <span class="comment">//记录全局最小距离对应的cost总和</span></span><br><span class="line">    <span class="keyword">int</span> min_sumDist;                            <span class="comment">//记录全局最小距离</span></span><br><span class="line">&#125;Graph;</span><br><span class="line"><span class="keyword">int</span> path[max_vexNum] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @description: 深度优先遍历图，并按条件进行剪枝，最终找到满足条件的最短路径，并更新全局最小距离，保存路径轨迹</span></span><br><span class="line"><span class="comment"> * @param &#123;Graph &amp;G:待遍历的图的引用, int start_vex：当前起始节点, int dist：从0到当前节点已用距离, int cost：从0到当前节点已用花费, int deep：当前深度&#125;   </span></span><br><span class="line"><span class="comment"> * @return: void</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">DFS</span><span class="params">(Graph &amp;G,<span class="keyword">int</span> start_vex,<span class="keyword">int</span> dist,<span class="keyword">int</span> cost,<span class="keyword">int</span> deep)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    G.is_visited[start_vex]=<span class="literal">true</span>;   <span class="comment">//当前节点访问过标志为真</span></span><br><span class="line">    path[deep] = start_vex+<span class="number">1</span>;       <span class="comment">//当前路径当前深度下节点编号</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (start_vex==max_vexNum<span class="number">-1</span>) &#123;            <span class="comment">//找到满足条件的更短路径，更新全局最短路径</span></span><br><span class="line">        <span class="comment">/* code */</span></span><br><span class="line">        G.min_sumDist = dist;</span><br><span class="line">        G.sumCost = cost;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;max_vexNum;i++)</span><br><span class="line">        &#123;</span><br><span class="line">            G.path[i]=<span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;=deep;i++)</span><br><span class="line">        &#123;</span><br><span class="line">            G.path[i] = path[i];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; max_vexNum; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">/* code */</span></span><br><span class="line">        <span class="keyword">if</span>((G.dist[start_vex][i]&gt;<span class="number">0</span>) &amp;&amp; (G.dist[start_vex][i]&lt;<span class="number">9999</span>) &amp;&amp; (G.is_visited[i]==<span class="literal">false</span>))</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">int</span> new_dist = dist+G.dist[start_vex][i];</span><br><span class="line">            <span class="keyword">int</span> new_cost = cost+G.cost[start_vex][i];</span><br><span class="line">            <span class="keyword">if</span>( (new_cost&gt;<span class="number">1500</span>) || (new_dist&gt;G.min_sumDist))&#123;       <span class="comment">//满足剪枝条件</span></span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">                <span class="comment">//这个剪枝的界还是不够紧凑</span></span><br><span class="line">                <span class="comment">//可以先通过Floyd求出每个节点到B的最短路径（路径下届）</span></span><br><span class="line">                <span class="comment">//求出每个节点到B的最小cost（花费下届）</span></span><br><span class="line">                <span class="comment">//如果 当前已有cost+从当前节点到B的最小cost&gt;1500 || </span></span><br><span class="line">                <span class="comment">//     当前已有路径长度+当前到B最短路径长&gt;G.min_sumDist </span></span><br><span class="line">                <span class="comment">//则剪枝</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span>&#123;</span><br><span class="line">                DFS(G,i,new_dist,new_cost,deep+<span class="number">1</span>);</span><br><span class="line">                G.is_visited[i]=<span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @description: 初始化图 </span></span><br><span class="line"><span class="comment"> * @param ：</span></span><br><span class="line"><span class="comment"> * Graph的引用 Graph &amp;</span></span><br><span class="line"><span class="comment"> * @return: void</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">initial_Graph</span><span class="params">(Graph &amp;G)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ifstream in_dist;</span><br><span class="line">    ifstream in_cost;</span><br><span class="line">    in_dist.open(<span class="string">"m1.txt"</span>);</span><br><span class="line">    <span class="keyword">if</span>(!in_dist.is_open())&#123;</span><br><span class="line">        <span class="built_in">cout</span>&lt;&lt;<span class="string">"Open file m1.txt failure"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    in_cost.open(<span class="string">"m2.txt"</span>);</span><br><span class="line">    <span class="keyword">if</span>(!in_cost.is_open())&#123;</span><br><span class="line">        <span class="built_in">cout</span>&lt;&lt;<span class="string">"Open file m2.txt failure"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;max_vexNum; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        G.is_visited[i]=<span class="literal">false</span>;</span><br><span class="line">        G.path[i]=<span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    G.sumCost = <span class="number">0</span>;</span><br><span class="line">    G.min_sumDist = MAX_INT;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; max_vexNum; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">/* code */</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> j =<span class="number">0</span>; j&lt;max_vexNum; j++)</span><br><span class="line">        &#123;</span><br><span class="line">            in_dist &gt;&gt; G.dist[i][j];</span><br><span class="line">            in_cost &gt;&gt; G.cost[i][j];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @description: 打印图G中的最小距离和其花费，以及最小距离对应的一个路径</span></span><br><span class="line"><span class="comment"> * @param &#123;Graph &amp;&#125; </span></span><br><span class="line"><span class="comment"> * @return: void</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">printGraph</span><span class="params">(Graph &amp;G)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"最小距离为:%d;\t其花费为:%d\n"</span>, G.min_sumDist, G.sumCost);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; G.path[i] != <span class="number">0</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (i == <span class="number">0</span>) <span class="built_in">printf</span>(<span class="string">"路径:%d"</span>, G.path[i]);</span><br><span class="line">        <span class="keyword">else</span> <span class="built_in">printf</span>(<span class="string">"-&gt;%d"</span>, G.path[i]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> <span class="keyword">const</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Graph G;</span><br><span class="line">    initial_Graph(G);</span><br><span class="line">    DFS(G,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line">    printGraph(G);</span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    system(<span class="string">"pause"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+        
+        <div class="post-announce">
+            感谢您的阅读，本文由
+            <a href="https://spaces-x.github.io">Space-X</a>
+            版权所有。如若转载，请注明出处：Space-X（<a href="https://spaces-x.github.io/2019/01/18/alogorithm/">https://spaces-x.github.io/2019/01/18/alogorithm/</a>）
+        </div>
+        
+
+        <div class="post__prevs">
+            <div class="post__prev">
+                
+                <a href="/2019/01/18/nanjing/" title="Nanjing"><i class="iconfont icon-prev"></i>Nanjing</a>
+                
+            </div>
+            <div class="post__prev post__prev--right">
+                
+                <a href="/2019/03/31/DecoratorMode/" title="DecoratorMode">DecoratorMode<i class="iconfont icon-next"></i></a>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+        
+        
+    </div>
+
+    <aside class="page__sidebar">
+    <!-- 
+        <div class="sidebar__img">
+            <img src="https://s1.ax1x.com/2018/08/08/PsWmg1.jpg" alt="Space-X" title="Space-X">
+        </div>
+     -->
+
+    <form id="page-search-from" class="page__search-from" action="/search/">
+        <label class="search-form__item">
+            <input class="input" type="text" name="search" placeholder="Search...">
+            <i class="iconfont icon-search"></i>
+        </label>
+    </form>
+
+    
+        <div class="sidebar__block">
+            <h3 class="block__title">简介</h3>
+            <p class="block__text">日常学习与兴趣交流的个人博客</p>
+        </div>
+    
+
+    <div class="sidebar__block">
+        <h3 class="block__title">文章分类</h3>
+        <ul class="block-list"><li class="block-list-item"><a class="block-list-link" href="/categories/计算机网络/">计算机网络</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/算法/">算法</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/游玩/">游玩</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/welcome/">welcome</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/java设计模式/">java设计模式</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/hadoop/">hadoop</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/OS/">OS</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/Hbase/">Hbase</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/Hadoop/">Hadoop</a><span class="block-list-count">2</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/Git-版本管理/">Git 版本管理</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/GFW/">GFW</a><span class="block-list-count">1</span></li></ul>
+    </div>
+    
+    <div class="sidebar__block">
+        <h3 class="block__title">最新文章</h3>
+        
+        <ul class="block-list latest-post-list">
+            
+                    <li class="latest-post-item">
+                        <a href="/2019/04/04/memorypaging/" title="Memory Paging">
+                            <div class="item__cover">
+                                <img src="https://s2.ax1x.com/2019/04/04/A2ifUO.md.jpg" alt="Memory Paging" />
+                            </div>
+                            <div class="item__info">
+                                <h3 class="item__title">Memory Paging</h3>
+                                <span class="item__text">2019-04-04</span>
+                            </div>
+                        </a>
+                    </li>
+                
+                    <li class="latest-post-item">
+                        <a href="/2019/03/31/DecoratorMode/" title="DecoratorMode">
+                            <div class="item__cover">
+                                <img src="https://s2.ax1x.com/2019/03/31/ArQrQJ.md.jpg" alt="DecoratorMode" />
+                            </div>
+                            <div class="item__info">
+                                <h3 class="item__title">DecoratorMode</h3>
+                                <span class="item__text">2019-03-31</span>
+                            </div>
+                        </a>
+                    </li>
+                
+                    <li class="latest-post-item">
+                        <a href="/2019/01/18/alogorithm/" title="Algorithm1">
+                            <div class="item__cover">
+                                <img src="https://s2.ax1x.com/2019/01/18/k9gwCD.jpg" alt="Algorithm1" />
+                            </div>
+                            <div class="item__info">
+                                <h3 class="item__title">Algorithm1</h3>
+                                <span class="item__text">2019-01-18</span>
+                            </div>
+                        </a>
+                    </li>
+                
+                    <li class="latest-post-item">
+                        <a href="/2019/01/18/nanjing/" title="Nanjing">
+                            <div class="item__cover">
+                                <img src="https://s2.ax1x.com/2019/01/19/kCEuX8.jpg" alt="Nanjing" />
+                            </div>
+                            <div class="item__info">
+                                <h3 class="item__title">Nanjing</h3>
+                                <span class="item__text">2019-01-18</span>
+                            </div>
+                        </a>
+                    </li>
+                
+        </ul>
+    
+    </div>
+
+    <div class="sidebar__block">
+        <h3 class="block__title">文章标签</h3>
+        
+        <ul class="block-list tag-list clearfix">
+            
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Eclipse/">Eclipse</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Google-PageRank/">Google,PageRank</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Great-Firewall/">Great Firewall</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Hadoop/">Hadoop</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Hadoop部署/">Hadoop部署</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Hbase/">Hbase</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Learning/">Learning</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Life/">Life</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Map-Reduce/">Map-Reduce</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/TCP-Socket通信/">TCP,Socket通信</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/git/">git</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/hadoop/">hadoop</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/hobbies/">hobbies</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/java/">java</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/linux/">linux</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/love/">love</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/memory/">memory</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/noSQL/">noSQL</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/paging/">paging</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/shadowsocks/">shadowsocks</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/travel/">travel</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/分支定界/">分支定界</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/列式数据库/">列式数据库</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/动态规划/">动态规划</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/版本管理/">版本管理</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/装饰器模式/">装饰器模式</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/计算机网络/">计算机网络</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/读取数据/">读取数据</a>
+                    </li>  
+                
+        </ul>
+    
+    </div>
+
+    <!-- <div class="sidebar__block">
+        <h3 class="block__title">友情链接</h3>
+        <ul class="block-list">
+            
+        </ul>
+    </div> -->
+</aside>
+</main>
+
+
+        
+            <!-- 页脚 -->
+<footer class="page__footer">
+    <section class="footer__top">
+        <div class="page__container footer__container">
+            
+            <div class="footer-top__item footer-top__item--2">
+                <h3 class="item__title">关于</h3>
+                <div class="item__content">
+                    <p class="item__text">本站是基于 Hexo 搭建的静态资源博客，主要用于分享日常学习、生活及工作的一些心得总结，欢迎点击右下角订阅 rss。</p>
+                    <ul class="footer__contact-info">
+                        <li class="contact-info__item">
+                            <i class="iconfont icon-address"></i>
+                            <span>Dalian, Lianning Province, China</span>
+                        </li>
+                        <li class="contact-info__item">
+                            <i class="iconfont icon-email2"></i>
+                            <span>dlut.weixiang@gmail.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            
+            
+                <div class="footer-top__item footer__image">
+                    <img src="https://s1.ax1x.com/2018/08/08/PsWmg1.jpg" alt="logo" title="Space-X">
+                </div>
+            
+            
+            
+            
+                
+                    <div class="footer-top__item">
+                        <h3 class="item__title">友情链接</h3>
+                        <div class="item__content">
+                            <ul class="footer-top__list">
+                                
+                                    <li class="list-item">
+                                        <a href="https://github.com/Mrminfive/hexo-theme-skapp" title="hexo-theme-skapp" target="_blank">hexo-theme-skapp</a>
+                                    </li>
+                                
+                            </ul>
+                        </div>
+                    </div>
+                
+                    <div class="footer-top__item">
+                        <h3 class="item__title">构建工具</h3>
+                        <div class="item__content">
+                            <ul class="footer-top__list">
+                                
+                                    <li class="list-item">
+                                        <a href="https://hexo.io/" title="Blog Framework" target="_blank">Hexo</a>
+                                    </li>
+                                
+                            </ul>
+                        </div>
+                    </div>
+                
+            
+        </div>
+    </section>
+    <section class="footer__bottom">
+        <div class="page__container footer__container">
+            <p class="footer__copyright">©
+                <a href="https://github.com/Mrminfive/hexo-theme-skapp" target="_blank">Skapp</a> 2017 powered by
+                <a href="http://hexo.io/" target="_blank">Hexo</a>, made by 
+                <a href="https://github.com/Mrminfive" target="_blank">minfive</a>.
+            </p>
+            <ul class="footer__social-network clearfix">
+                
+                
+                    <li class="social-network__item">
+                        <a href="https://github.com/spaces-x" target="_blank" title="github">
+                            <i class="iconfont icon-github"></i>
+                        </a>
+                    </li>
+                
+                    <li class="social-network__item">
+                        <a href="mailto:dlut.weixiang@gmail.com" target="_blank" title="email">
+                            <i class="iconfont icon-email"></i>
+                        </a>
+                    </li>
+                
+                    <li class="social-network__item">
+                        <a href="/atom.xml" target="_blank" title="rss">
+                            <i class="iconfont icon-rss"></i>
+                        </a>
+                    </li>
+                
+                
+            </ul>
+        </div>
+    </section>
+</footer>
+        
+
+        
+            <!-- 返回顶部 -->
+<div id="back-top" class="back-top back-top--hidden js-hidden">
+    <i class="iconfont icon-top"></i>
+</div>
+        
+    </div>
+
+    <!-- build:js /js/common.js -->
+        <script type="text/javascript" src="js/common/utils.js"></script>
+        <script type="text/javascript" src="js/common/pack.js"></script>
+        <script type="text/javascript" src="js/common/animation.js"></script>
+        <script type="text/javascript" src="js/layout/loading.js"></script>
+        <script type="text/javascript" src="js/layout/header.js"></script>
+        <script type="text/javascript" src="js/layout/back-top.js"></script>
+        <script type="text/javascript" src="js/layout/post.js"></script>
+    <!-- endbuild -->
+
+    
+    <script src="/js/page/post.js"></script>
+
+
+    
+    
+
+
+
+    <!-- 不蒜子统计 -->
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+
+     
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,1 +1,574 @@
-<!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><title>Hadoop Day 1 | X-Blog</title><meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="format-detection" content="telephone=no"><meta name="author" content="[object Object]"><meta name="designer" content="minfive"><meta name="keywords" content="Xiang blog, 程序员, SCI论文, Python, Hadoop, 深度炼丹"><meta name="description" content="日常学习与兴趣交流的个人博客"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="format-detection" content="telephone=yes"><meta name="mobile-web-app-capable" content="yes"><meta name="robots" content="all"><link rel="canonical" href="https://spaces-x.github.io/2018/07/16/hadoop/index.html"><link rel="icon" type="image/png" href="https://www.easyicon.net/api/resizeApi.php?id=546977&size=32" sizes="32x32"><link rel="stylesheet" href="/scss/base/index.css"><link rel="alternate" href="/atom.xml" title="Space-X"><link rel="stylesheet" href="/scss/views/page/post.css"></head><body ontouchstart><div id="page-loading" class="page page-loading" style="background-image:url(http://oo12ugek5.bkt.clouddn.com/blog/images/loader.gif)"></div><div id="page" class="page js-hidden"><header class="page__small-header page__header--small"><nav class="page__navbar"><div class="page__container navbar-container"><a class="page__logo" href="/" title="Space-X" alt="Space-X"><img src="https://s1.ax1x.com/2018/07/15/PMfvfP.png" alt="Space-X"></a><nav class="page__nav"><ul class="nav__list clearfix"><li class="nav__item"><a href="/" alt="首页" title="首页">首页</a></li><li class="nav__item"><a href="/archives" alt="归档" title="归档">归档</a></li><li class="nav__item"><a href="/about" alt="关于" title="关于">关于</a></li></ul></nav><button class="page__menu-btn" type="button"><i class="iconfont icon-menu"></i></button></div></nav></header><main class="page__container page__main"><div class="page__content"><article class="page__post"><div class="post__cover"><img src="https://s1.ax1x.com/2018/07/16/PQhzFA.jpg" alt="Hadoop Day 1"></div><header class="post__info"><h1 class="post__title">Hadoop Day 1</h1><div class="post__mark"><div class="mark__block"><i class="mark__icon iconfont icon-write"></i><ul class="mark__list clearfix"><li class="mark__item"><a href="https://www.github.com/spaces-x">WeiXiang</a></li></ul></div><div class="mark__block"><i class="mark__icon iconfont icon-time"></i><ul class="mark__list clearfix"><li class="mark__item"><span>2018-07-16</span></li></ul></div><div class="mark__block"><i class="mark__icon iconfont icon-tab"></i><ul class="mark__list clearfix"><li class="mark__item"><a href="/tags/Hadoop/">Hadoop</a></li><li class="mark__item"><a href="/tags/Google-PageRank/">Google,PageRank</a></li></ul></div></div></header><div class="post__content"><script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script><h3 id="Hadoop起源"><a href="#Hadoop起源" class="headerlink" title="Hadoop起源:"></a>Hadoop起源:</h3><p>Google的低成本之道:</p><blockquote><ol><li>不使用超算，不使用存储（淘宝的去i，去e，去o之路）</li><li>大量使用普通的pc服务器，提供有冗余的集群服务</li><li>全世界多个数据中心，有些附带发电厂</li><li>运营商（中国联通 电信） 向Google倒付费</li></ol></blockquote><p><img src="https://s1.ax1x.com/2018/07/16/PQ5HbD.png" alt="google hard problem"><br>可以把Hadoop理解成是一个山寨版的Google，它是基于Google的三篇论文（解决上图中的问题）提出，具体如下：</p><ol><li>GFS(Google File System)</li><li>PageRank</li><li>Bigtable</li></ol><p>其中GFS 是HDFS的雏形；Bigtable是HBase的雏形</p><p>而PageRank主要是解决如何量化一个网页的价值问题，google通过建立数学模型来量化网页的价值进而在搜索结果中排序(后面会讲),但是由于该数学模型涉及到百万数量级的矩阵乘法运算，这在世界范围内都找不到能够在秒级单位的Response Time，因此对模型的求解引发了Map-Reduce分布式处理的思想，也就有了Hadoop中Map-Reduced的由来。</p><h3 id="倒排索引："><a href="#倒排索引：" class="headerlink" title="倒排索引："></a>倒排索引：</h3><p>Google 搜索的数据量相当大，按照常人的思维，google搜索应该是全数据库检索，但是这就不符合Google 毫秒级的响应时间。 这里google借助了倒排索引，顾名思义，所谓倒排索引就是于正常相反，不是由记录来确定属性值，而是由属性值来确定记录的位置，因而称为倒排索引。<br>举个简单的例子以英文为例，下面是被索引的数据：</p><ul><li>T<sub>0</sub>: “it is what it is”</li><li>T<sub>1</sub>: “what is it”</li><li>T<sub>2</sub>: “it is a banana”</li></ul><p>通过分词我们可以得到如下的反向索引</p><blockquote><p>“a”: {2}<br>“banana”: {2}<br>“is”: {0, 1, 2}<br>“it”: {0, 1, 2}<br>“what”: {0, 1}</p></blockquote><p>搜索 “what is it” 就变成求关键字的交集 即<br>$${ 0,1 } \cap { 0,1,2 } \cap {0,1,2} = {0,1}$$</p><h3 id="PageRank"><a href="#PageRank" class="headerlink" title="PageRank:"></a>PageRank:</h3><p><a href="https://en.wikipedia.org/wiki/PageRank" target="_blank" rel="noopener">PageRank</a> 是用来量化不同网页的价值的，它主要采用不同网页外连接到本网页的多少来量化，其实和期刊的影响因子计算类似，如果其他网页外链到本网页的数目也多，也就是本网页被其他网页引用次数越多，那么本网页的PageRank则高。</p><p>PageRank的具体算法如下<br><img src="https://s1.ax1x.com/2018/07/16/PQIJR1.png" alt="pagerank"><br><img src="https://s1.ax1x.com/2018/07/16/PQIUsK.png" alt="pagerank"><br><img src="https://s1.ax1x.com/2018/07/16/PQILLT.png" alt="pagerank"></p><p>最后图中 q为所求的pagerank的解 q是矩阵G特征值为1的特征向量，求解可以通过随机初始化q<sup>cur</sup> 不断迭代最后收敛。</p><div class="post-announce">感谢您的阅读，本文由 <a href="https://spaces-x.github.io">Space-X</a> 版权所有。如若转载，请注明出处：Space-X（<a href="https://spaces-x.github.io/2018/07/16/hadoop/">https://spaces-x.github.io/2018/07/16/hadoop/</a>）</div><div class="post__prevs"><div class="post__prev"><a href="/2018/07/16/tcp/" title="网络基础之TCP连接建立分析"><i class="iconfont icon-prev"></i>网络基础之TCP连接建立分析</a></div><div class="post__prev post__prev--right"><a href="/2018/07/21/GFW/" title="GFW">GFW<i class="iconfont icon-next"></i></a></div></div></div></article></div><aside class="page__sidebar"><form id="page-search-from" class="page__search-from" action="/search/"><label class="search-form__item"><input class="input" type="text" name="search" placeholder="Search..."> <i class="iconfont icon-search"></i></label></form><div class="sidebar__block"><h3 class="block__title">简介</h3><p class="block__text">日常学习与兴趣交流的个人博客</p></div><div class="sidebar__block"><h3 class="block__title">文章分类</h3><ul class="block-list"><li class="block-list-item"><a class="block-list-link" href="/categories/计算机网络/">计算机网络</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/算法/">算法</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/游玩/">游玩</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/welcome/">welcome</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/java设计模式/">java设计模式</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/hadoop/">hadoop</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/OS/">OS</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/Hbase/">Hbase</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/Hadoop/">Hadoop</a><span class="block-list-count">2</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/Git-版本管理/">Git 版本管理</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/GFW/">GFW</a><span class="block-list-count">1</span></li></ul></div><div class="sidebar__block"><h3 class="block__title">最新文章</h3><ul class="block-list latest-post-list"><li class="latest-post-item"><a href="/2019/04/04/memorypaging/" title="Memory Paging"><div class="item__cover"><img src="https://s2.ax1x.com/2019/04/04/A2ifUO.md.jpg" alt="Memory Paging"></div><div class="item__info"><h3 class="item__title">Memory Paging</h3><span class="item__text">2019-04-04</span></div></a></li><li class="latest-post-item"><a href="/2019/03/31/DecoratorMode/" title="DecoratorMode"><div class="item__cover"><img src="https://s2.ax1x.com/2019/03/31/ArQrQJ.md.jpg" alt="DecoratorMode"></div><div class="item__info"><h3 class="item__title">DecoratorMode</h3><span class="item__text">2019-03-31</span></div></a></li><li class="latest-post-item"><a href="/2019/01/18/alogorithm/" title="Algorithm1"><div class="item__cover"><img src="https://s2.ax1x.com/2019/01/18/k9gwCD.jpg" alt="Algorithm1"></div><div class="item__info"><h3 class="item__title">Algorithm1</h3><span class="item__text">2019-01-18</span></div></a></li><li class="latest-post-item"><a href="/2019/01/18/nanjing/" title="Nanjing"><div class="item__cover"><img src="https://s2.ax1x.com/2019/01/19/kCEuX8.jpg" alt="Nanjing"></div><div class="item__info"><h3 class="item__title">Nanjing</h3><span class="item__text">2019-01-18</span></div></a></li></ul></div><div class="sidebar__block"><h3 class="block__title">文章标签</h3><ul class="block-list tag-list clearfix"><li class="tag-item"><a class="tag-link" href="/tags/Eclipse/">Eclipse</a></li><li class="tag-item"><a class="tag-link" href="/tags/Google-PageRank/">Google,PageRank</a></li><li class="tag-item"><a class="tag-link" href="/tags/Great-Firewall/">Great Firewall</a></li><li class="tag-item"><a class="tag-link" href="/tags/Hadoop/">Hadoop</a></li><li class="tag-item"><a class="tag-link" href="/tags/Hadoop部署/">Hadoop部署</a></li><li class="tag-item"><a class="tag-link" href="/tags/Hbase/">Hbase</a></li><li class="tag-item"><a class="tag-link" href="/tags/Learning/">Learning</a></li><li class="tag-item"><a class="tag-link" href="/tags/Life/">Life</a></li><li class="tag-item"><a class="tag-link" href="/tags/Map-Reduce/">Map-Reduce</a></li><li class="tag-item"><a class="tag-link" href="/tags/TCP-Socket通信/">TCP,Socket通信</a></li><li class="tag-item"><a class="tag-link" href="/tags/git/">git</a></li><li class="tag-item"><a class="tag-link" href="/tags/hadoop/">hadoop</a></li><li class="tag-item"><a class="tag-link" href="/tags/hobbies/">hobbies</a></li><li class="tag-item"><a class="tag-link" href="/tags/java/">java</a></li><li class="tag-item"><a class="tag-link" href="/tags/linux/">linux</a></li><li class="tag-item"><a class="tag-link" href="/tags/love/">love</a></li><li class="tag-item"><a class="tag-link" href="/tags/memory/">memory</a></li><li class="tag-item"><a class="tag-link" href="/tags/noSQL/">noSQL</a></li><li class="tag-item"><a class="tag-link" href="/tags/paging/">paging</a></li><li class="tag-item"><a class="tag-link" href="/tags/shadowsocks/">shadowsocks</a></li><li class="tag-item"><a class="tag-link" href="/tags/travel/">travel</a></li><li class="tag-item"><a class="tag-link" href="/tags/分支定界/">分支定界</a></li><li class="tag-item"><a class="tag-link" href="/tags/列式数据库/">列式数据库</a></li><li class="tag-item"><a class="tag-link" href="/tags/动态规划/">动态规划</a></li><li class="tag-item"><a class="tag-link" href="/tags/版本管理/">版本管理</a></li><li class="tag-item"><a class="tag-link" href="/tags/装饰器模式/">装饰器模式</a></li><li class="tag-item"><a class="tag-link" href="/tags/计算机网络/">计算机网络</a></li><li class="tag-item"><a class="tag-link" href="/tags/读取数据/">读取数据</a></li></ul></div></aside></main><footer class="page__footer"><section class="footer__top"><div class="page__container footer__container"><div class="footer-top__item footer-top__item--2"><h3 class="item__title">关于</h3><div class="item__content"><p class="item__text">本站是基于 Hexo 搭建的静态资源博客，主要用于分享日常学习、生活及工作的一些心得总结，欢迎点击右下角订阅 rss。</p><ul class="footer__contact-info"><li class="contact-info__item"><i class="iconfont icon-address"></i> <span>Dalian, Lianning Province, China</span></li><li class="contact-info__item"><i class="iconfont icon-email2"></i> <span>dlut.weixiang@gmail.com</span></li></ul></div></div><div class="footer-top__item footer__image"><img src="https://s1.ax1x.com/2018/08/08/PsWmg1.jpg" alt="logo" title="Space-X"></div><div class="footer-top__item"><h3 class="item__title">友情链接</h3><div class="item__content"><ul class="footer-top__list"><li class="list-item"><a href="https://github.com/Mrminfive/hexo-theme-skapp" title="hexo-theme-skapp" target="_blank">hexo-theme-skapp</a></li></ul></div></div><div class="footer-top__item"><h3 class="item__title">构建工具</h3><div class="item__content"><ul class="footer-top__list"><li class="list-item"><a href="https://hexo.io/" title="Blog Framework" target="_blank">Hexo</a></li></ul></div></div></div></section><section class="footer__bottom"><div class="page__container footer__container"><p class="footer__copyright">© <a href="https://github.com/Mrminfive/hexo-theme-skapp" target="_blank">Skapp</a> 2017 powered by <a href="http://hexo.io/" target="_blank">Hexo</a>, made by <a href="https://github.com/Mrminfive" target="_blank">minfive</a>.</p><ul class="footer__social-network clearfix"><li class="social-network__item"><a href="https://github.com/spaces-x" target="_blank" title="github"><i class="iconfont icon-github"></i></a></li><li class="social-network__item"><a href="mailto:dlut.weixiang@gmail.com" target="_blank" title="email"><i class="iconfont icon-email"></i></a></li><li class="social-network__item"><a href="/atom.xml" target="_blank" title="rss"><i class="iconfont icon-rss"></i></a></li></ul></div></section></footer><div id="back-top" class="back-top back-top--hidden js-hidden"><i class="iconfont icon-top"></i></div></div><script src="/js/common.js"></script><script src="/js/page/post.js"></script><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8" />
+    
+        <title>Hadoop Day 1 | X-Blog</title>
+    
+
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<meta name="format-detection" content="telephone=no">
+<meta name="author" content="[object Object]" />
+<meta name="designer" content="minfive" />
+<meta name="keywords" content="Xiang blog, 程序员, SCI论文, Python, Hadoop, 深度炼丹"/>
+<meta name="description" content="日常学习与兴趣交流的个人博客" />
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="robots" content="all" />
+
+<link rel="canonical" href="https://spaces-x.github.io/2018/07/16/hadoop/index.html">
+
+<link rel="icon" type="image/png" href="https://www.easyicon.net/api/resizeApi.php?id=546977&size=32" sizes="32x32">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Prefetch -->
+
+
+
+
+
+
+<!-- CSS -->
+<link rel="stylesheet" href="/scss/base/index.css">
+
+<!-- RSS -->
+<link rel="alternate" href="/atom.xml" title="Space-X">
+
+<!-- 统计 -->
+<!-- 百度统计 -->
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    
+    
+    <link rel="stylesheet" href="/scss/views/page/post.css">
+
+</head>
+<body ontouchstart>
+    
+        <!-- loading 页面 -->
+<div id="page-loading" class="page page-loading" style="background-image: url('http://oo12ugek5.bkt.clouddn.com/blog/images/loader.gif')"></div>
+    
+
+    <div id="page" class="page js-hidden">
+        
+    <!-- 页头 -->
+<header class="page__small-header page__header--small">
+    <nav class="page__navbar">
+        <div class="page__container navbar-container">
+            <a class="page__logo" href="/" title="Space-X" alt="Space-X">
+                <img src="https://s1.ax1x.com/2018/07/15/PMfvfP.png" alt="Space-X">
+            </a>
+
+            <nav class="page__nav">
+                <ul class="nav__list clearfix">
+                    
+                        
+                        <li class="nav__item">
+                            <a href="/" alt="首页" title="首页">首页</a>
+                        </li>
+                    
+                        
+                        <li class="nav__item">
+                            <a href="/archives" alt="归档" title="归档">归档</a>
+                        </li>
+                    
+                        
+                        <li class="nav__item">
+                            <a href="/about" alt="关于" title="关于">关于</a>
+                        </li>
+                    
+                </ul>
+            </nav>
+
+            <button class="page__menu-btn" type="button">
+                <i class="iconfont icon-menu"></i>
+            </button>
+        </div>
+    </nav>
+</header>
+
+
+        
+    <main class="page__container page__main">
+    <div class="page__content">
+        <article class="page__post">
+    <div class="post__cover">
+        <img src="https://s1.ax1x.com/2018/07/16/PQhzFA.jpg" alt="Hadoop Day 1">
+    </div>
+
+    <header class="post__info">
+        <h1 class="post__title">Hadoop Day 1</h1>
+
+        <div class="post__mark">
+            <div class="mark__block">
+                <i class="mark__icon iconfont icon-write"></i>
+                <ul class="mark__list clearfix">
+                    <li class="mark__item">
+                        <a href="https://www.github.com/spaces-x">WeiXiang</a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="mark__block">
+                <i class="mark__icon iconfont icon-time"></i>
+                <ul class="mark__list clearfix">
+                    <li class="mark__item"><span>2018-07-16</span></li>
+                </ul>
+            </div>
+
+            <div class="mark__block">
+                <i class="mark__icon iconfont icon-tab"></i>
+                <ul class="mark__list clearfix">
+                    
+                        <li class="mark__item">
+                            <a href="/tags/Hadoop/">Hadoop</a>
+                        </li>
+                    
+                        <li class="mark__item">
+                            <a href="/tags/Google-PageRank/">Google,PageRank</a>
+                        </li>
+                    
+                </ul>
+            </div>
+
+            
+        </div>
+    </header>
+
+    <div class="post__content">
+        <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
+
+<h3 id="Hadoop起源"><a href="#Hadoop起源" class="headerlink" title="Hadoop起源:"></a>Hadoop起源:</h3><p>Google的低成本之道:</p>
+<blockquote>
+<ol>
+<li>不使用超算，不使用存储（淘宝的去i，去e，去o之路）</li>
+<li>大量使用普通的pc服务器，提供有冗余的集群服务</li>
+<li>全世界多个数据中心，有些附带发电厂</li>
+<li>运营商（中国联通 电信） 向Google倒付费</li>
+</ol>
+</blockquote>
+<p><img src="https://s1.ax1x.com/2018/07/16/PQ5HbD.png" alt="google hard problem"><br>可以把Hadoop理解成是一个山寨版的Google，它是基于Google的三篇论文（解决上图中的问题）提出，具体如下：</p>
+<ol>
+<li>GFS(Google File System)</li>
+<li>PageRank</li>
+<li>Bigtable</li>
+</ol>
+<p>其中GFS 是HDFS的雏形；Bigtable是HBase的雏形</p>
+<p>而PageRank主要是解决如何量化一个网页的价值问题，google通过建立数学模型来量化网页的价值进而在搜索结果中排序(后面会讲),但是由于该数学模型涉及到百万数量级的矩阵乘法运算，这在世界范围内都找不到能够在秒级单位的Response Time，因此对模型的求解引发了Map-Reduce分布式处理的思想，也就有了Hadoop中Map-Reduced的由来。</p>
+<h3 id="倒排索引："><a href="#倒排索引：" class="headerlink" title="倒排索引："></a>倒排索引：</h3><p>Google 搜索的数据量相当大，按照常人的思维，google搜索应该是全数据库检索，但是这就不符合Google 毫秒级的响应时间。 这里google借助了倒排索引，顾名思义，所谓倒排索引就是于正常相反，不是由记录来确定属性值，而是由属性值来确定记录的位置，因而称为倒排索引。<br>举个简单的例子以英文为例，下面是被索引的数据：</p>
+<ul>
+<li>T<sub>0</sub>: “it is what it is”</li>
+<li>T<sub>1</sub>: “what is it”</li>
+<li>T<sub>2</sub>: “it is a banana”</li>
+</ul>
+<p>通过分词我们可以得到如下的反向索引</p>
+<blockquote>
+<p>“a”:      {2}<br>“banana”: {2}<br>“is”:     {0, 1, 2}<br>“it”:     {0, 1, 2}<br>“what”:   {0, 1}  </p>
+</blockquote>
+<p>搜索 “what is it” 就变成求关键字的交集 即<br>$${ 0,1 } \cap { 0,1,2 } \cap {0,1,2} = {0,1}$$</p>
+<h3 id="PageRank"><a href="#PageRank" class="headerlink" title="PageRank:"></a>PageRank:</h3><p><a href="https://en.wikipedia.org/wiki/PageRank" target="_blank" rel="noopener">PageRank</a> 是用来量化不同网页的价值的，它主要采用不同网页外连接到本网页的多少来量化，其实和期刊的影响因子计算类似，如果其他网页外链到本网页的数目也多，也就是本网页被其他网页引用次数越多，那么本网页的PageRank则高。</p>
+<p>PageRank的具体算法如下<br><img src="https://s1.ax1x.com/2018/07/16/PQIJR1.png" alt="pagerank"><br><img src="https://s1.ax1x.com/2018/07/16/PQIUsK.png" alt="pagerank"><br><img src="https://s1.ax1x.com/2018/07/16/PQILLT.png" alt="pagerank"></p>
+<p>最后图中 q为所求的pagerank的解 q是矩阵G特征值为1的特征向量，求解可以通过随机初始化q<sup>cur</sup> 不断迭代最后收敛。</p>
+
+
+        
+        <div class="post-announce">
+            感谢您的阅读，本文由
+            <a href="https://spaces-x.github.io">Space-X</a>
+            版权所有。如若转载，请注明出处：Space-X（<a href="https://spaces-x.github.io/2018/07/16/hadoop/">https://spaces-x.github.io/2018/07/16/hadoop/</a>）
+        </div>
+        
+
+        <div class="post__prevs">
+            <div class="post__prev">
+                
+                <a href="/2018/07/16/tcp/" title="网络基础之TCP连接建立分析"><i class="iconfont icon-prev"></i>网络基础之TCP连接建立分析</a>
+                
+            </div>
+            <div class="post__prev post__prev--right">
+                
+                <a href="/2018/07/21/GFW/" title="GFW">GFW<i class="iconfont icon-next"></i></a>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+        
+        
+    </div>
+
+    <aside class="page__sidebar">
+    <!-- 
+        <div class="sidebar__img">
+            <img src="https://s1.ax1x.com/2018/08/08/PsWmg1.jpg" alt="Space-X" title="Space-X">
+        </div>
+     -->
+
+    <form id="page-search-from" class="page__search-from" action="/search/">
+        <label class="search-form__item">
+            <input class="input" type="text" name="search" placeholder="Search...">
+            <i class="iconfont icon-search"></i>
+        </label>
+    </form>
+
+    
+        <div class="sidebar__block">
+            <h3 class="block__title">简介</h3>
+            <p class="block__text">日常学习与兴趣交流的个人博客</p>
+        </div>
+    
+
+    <div class="sidebar__block">
+        <h3 class="block__title">文章分类</h3>
+        <ul class="block-list"><li class="block-list-item"><a class="block-list-link" href="/categories/计算机网络/">计算机网络</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/算法/">算法</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/游玩/">游玩</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/welcome/">welcome</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/java设计模式/">java设计模式</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/hadoop/">hadoop</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/OS/">OS</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/Hbase/">Hbase</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/Hadoop/">Hadoop</a><span class="block-list-count">2</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/Git-版本管理/">Git 版本管理</a><span class="block-list-count">1</span></li><li class="block-list-item"><a class="block-list-link" href="/categories/GFW/">GFW</a><span class="block-list-count">1</span></li></ul>
+    </div>
+    
+    <div class="sidebar__block">
+        <h3 class="block__title">最新文章</h3>
+        
+        <ul class="block-list latest-post-list">
+            
+                    <li class="latest-post-item">
+                        <a href="/2019/04/04/memorypaging/" title="Memory Paging">
+                            <div class="item__cover">
+                                <img src="https://s2.ax1x.com/2019/04/04/A2ifUO.md.jpg" alt="Memory Paging" />
+                            </div>
+                            <div class="item__info">
+                                <h3 class="item__title">Memory Paging</h3>
+                                <span class="item__text">2019-04-04</span>
+                            </div>
+                        </a>
+                    </li>
+                
+                    <li class="latest-post-item">
+                        <a href="/2019/03/31/DecoratorMode/" title="DecoratorMode">
+                            <div class="item__cover">
+                                <img src="https://s2.ax1x.com/2019/03/31/ArQrQJ.md.jpg" alt="DecoratorMode" />
+                            </div>
+                            <div class="item__info">
+                                <h3 class="item__title">DecoratorMode</h3>
+                                <span class="item__text">2019-03-31</span>
+                            </div>
+                        </a>
+                    </li>
+                
+                    <li class="latest-post-item">
+                        <a href="/2019/01/18/alogorithm/" title="Algorithm1">
+                            <div class="item__cover">
+                                <img src="https://s2.ax1x.com/2019/01/18/k9gwCD.jpg" alt="Algorithm1" />
+                            </div>
+                            <div class="item__info">
+                                <h3 class="item__title">Algorithm1</h3>
+                                <span class="item__text">2019-01-18</span>
+                            </div>
+                        </a>
+                    </li>
+                
+                    <li class="latest-post-item">
+                        <a href="/2019/01/18/nanjing/" title="Nanjing">
+                            <div class="item__cover">
+                                <img src="https://s2.ax1x.com/2019/01/19/kCEuX8.jpg" alt="Nanjing" />
+                            </div>
+                            <div class="item__info">
+                                <h3 class="item__title">Nanjing</h3>
+                                <span class="item__text">2019-01-18</span>
+                            </div>
+                        </a>
+                    </li>
+                
+        </ul>
+    
+    </div>
+
+    <div class="sidebar__block">
+        <h3 class="block__title">文章标签</h3>
+        
+        <ul class="block-list tag-list clearfix">
+            
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Eclipse/">Eclipse</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Google-PageRank/">Google,PageRank</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Great-Firewall/">Great Firewall</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Hadoop/">Hadoop</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Hadoop部署/">Hadoop部署</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Hbase/">Hbase</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Learning/">Learning</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Life/">Life</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/Map-Reduce/">Map-Reduce</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/TCP-Socket通信/">TCP,Socket通信</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/git/">git</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/hadoop/">hadoop</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/hobbies/">hobbies</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/java/">java</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/linux/">linux</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/love/">love</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/memory/">memory</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/noSQL/">noSQL</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/paging/">paging</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/shadowsocks/">shadowsocks</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/travel/">travel</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/分支定界/">分支定界</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/列式数据库/">列式数据库</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/动态规划/">动态规划</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/版本管理/">版本管理</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/装饰器模式/">装饰器模式</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/计算机网络/">计算机网络</a>
+                    </li>  
+                
+                    <li class="tag-item">
+                        <a class="tag-link" href="/tags/读取数据/">读取数据</a>
+                    </li>  
+                
+        </ul>
+    
+    </div>
+
+    <!-- <div class="sidebar__block">
+        <h3 class="block__title">友情链接</h3>
+        <ul class="block-list">
+            
+        </ul>
+    </div> -->
+</aside>
+</main>
+
+
+        
+            <!-- 页脚 -->
+<footer class="page__footer">
+    <section class="footer__top">
+        <div class="page__container footer__container">
+            
+            <div class="footer-top__item footer-top__item--2">
+                <h3 class="item__title">关于</h3>
+                <div class="item__content">
+                    <p class="item__text">本站是基于 Hexo 搭建的静态资源博客，主要用于分享日常学习、生活及工作的一些心得总结，欢迎点击右下角订阅 rss。</p>
+                    <ul class="footer__contact-info">
+                        <li class="contact-info__item">
+                            <i class="iconfont icon-address"></i>
+                            <span>Dalian, Lianning Province, China</span>
+                        </li>
+                        <li class="contact-info__item">
+                            <i class="iconfont icon-email2"></i>
+                            <span>dlut.weixiang@gmail.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            
+            
+                <div class="footer-top__item footer__image">
+                    <img src="https://s1.ax1x.com/2018/08/08/PsWmg1.jpg" alt="logo" title="Space-X">
+                </div>
+            
+            
+            
+            
+                
+                    <div class="footer-top__item">
+                        <h3 class="item__title">友情链接</h3>
+                        <div class="item__content">
+                            <ul class="footer-top__list">
+                                
+                                    <li class="list-item">
+                                        <a href="https://github.com/Mrminfive/hexo-theme-skapp" title="hexo-theme-skapp" target="_blank">hexo-theme-skapp</a>
+                                    </li>
+                                
+                            </ul>
+                        </div>
+                    </div>
+                
+                    <div class="footer-top__item">
+                        <h3 class="item__title">构建工具</h3>
+                        <div class="item__content">
+                            <ul class="footer-top__list">
+                                
+                                    <li class="list-item">
+                                        <a href="https://hexo.io/" title="Blog Framework" target="_blank">Hexo</a>
+                                    </li>
+                                
+                            </ul>
+                        </div>
+                    </div>
+                
+            
+        </div>
+    </section>
+    <section class="footer__bottom">
+        <div class="page__container footer__container">
+            <p class="footer__copyright">©
+                <a href="https://github.com/Mrminfive/hexo-theme-skapp" target="_blank">Skapp</a> 2017 powered by
+                <a href="http://hexo.io/" target="_blank">Hexo</a>, made by 
+                <a href="https://github.com/Mrminfive" target="_blank">minfive</a>.
+            </p>
+            <ul class="footer__social-network clearfix">
+                
+                
+                    <li class="social-network__item">
+                        <a href="https://github.com/spaces-x" target="_blank" title="github">
+                            <i class="iconfont icon-github"></i>
+                        </a>
+                    </li>
+                
+                    <li class="social-network__item">
+                        <a href="mailto:dlut.weixiang@gmail.com" target="_blank" title="email">
+                            <i class="iconfont icon-email"></i>
+                        </a>
+                    </li>
+                
+                    <li class="social-network__item">
+                        <a href="/atom.xml" target="_blank" title="rss">
+                            <i class="iconfont icon-rss"></i>
+                        </a>
+                    </li>
+                
+                
+            </ul>
+        </div>
+    </section>
+</footer>
+        
+
+        
+            <!-- 返回顶部 -->
+<div id="back-top" class="back-top back-top--hidden js-hidden">
+    <i class="iconfont icon-top"></i>
+</div>
+        
+    </div>
+
+    <!-- build:js /js/common.js -->
+        <script type="text/javascript" src="js/common/utils.js"></script>
+        <script type="text/javascript" src="js/common/pack.js"></script>
+        <script type="text/javascript" src="js/common/animation.js"></script>
+        <script type="text/javascript" src="js/layout/loading.js"></script>
+        <script type="text/javascript" src="js/layout/header.js"></script>
+        <script type="text/javascript" src="js/layout/back-top.js"></script>
+        <script type="text/javascript" src="js/layout/post.js"></script>
+    <!-- endbuild -->
+
+    
+    <script src="/js/page/post.js"></script>
+
+
+    
+    
+
+
+
+    <!-- 不蒜子统计 -->
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+
+     
+
+
+
+
+
+
+
+
+</body>
+</html>
